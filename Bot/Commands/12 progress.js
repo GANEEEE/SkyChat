@@ -17,11 +17,24 @@ module.exports = {
 
     async execute(interaction) {
         try {
-            await interaction.deferReply();
+            // بدل deferReply، أرسل ردًا فوريًا
+            const container = new ContainerBuilder()
+                .setAccentColor(0x0073ff)
+                .addTextDisplayComponents((text) => text.setContent(`## Loading your progress...`));
+
+            await interaction.reply({
+                components: [container],
+                flags: MessageFlags.IsComponentsV2,
+                fetchReply: true
+            });
+
+            // ثم استدع showMainProgressMenu
             await showMainProgressMenu(interaction);
+
         } catch (error) {
             console.error('❌ Error in progress command:', error);
 
+            // معالجة الأخطاء بطريقة آمنة
             if (interaction.deferred || interaction.replied) {
                 try {
                     await interaction.editReply({ 
@@ -47,6 +60,12 @@ async function showMainProgressMenu(interaction) {
     let response;
 
     try {
+        // التحقق من أن التفاعل لم ينتهي
+        if (!interaction || interaction.ended) {
+            console.log('❌ Interaction already ended');
+            return;
+        }
+
         const container = new ContainerBuilder()
             .setAccentColor(0x0073ff);
 
@@ -77,15 +96,26 @@ async function showMainProgressMenu(interaction) {
                 )
             );
 
-        response = await interaction.editReply({
-            components: [container],
-            flags: MessageFlags.IsComponentsV2,
-            fetchReply: true
-        });
+        // استخدام editReply إذا كان deferReply تم
+        if (interaction.deferred || interaction.replied) {
+            await interaction.editReply({
+                components: [container],
+                flags: MessageFlags.IsComponentsV2
+            });
+        } else {
+            await interaction.reply({
+                components: [container],
+                flags: MessageFlags.IsComponentsV2,
+                fetchReply: true
+            });
+        }
 
-        const collector = response.createMessageComponentCollector({
+        // احصل على الرسالة
+        const message = await interaction.fetchReply();
+
+        const collector = message.createMessageComponentCollector({
             componentType: ComponentType.Button,
-            time: 60000,
+            time: 30000, // قلل الوقت إلى 30 ثانية
             filter: (i) => i.user.id === interaction.user.id
         });
 
@@ -93,11 +123,17 @@ async function showMainProgressMenu(interaction) {
             try {
                 if (!i.isButton()) return;
 
+                // تحقق من عمر التفاعل
+                if (i.createdTimestamp < Date.now() - 5000) {
+                    console.log('⚠️ Interaction too old, ignoring');
+                    return;
+                }
+
                 try {
                     await i.deferUpdate();
                 } catch (deferError) {
-                    console.log('⚠️ Defer update failed, skipping:', deferError.message);
-                    return;
+                    console.log('⚠️ Defer update failed, trying direct handling');
+                    // استمر في المعالجة حتى بدون deferUpdate
                 }
 
                 switch(i.customId) {
@@ -109,6 +145,10 @@ async function showMainProgressMenu(interaction) {
                         break;
                 }
             } catch (error) {
+                if (error.code === 10062) {
+                    console.log('⚠️ Interaction expired, skipping');
+                    return;
+                }
                 console.error('Error in button handler:', error);
             }
         });
@@ -120,18 +160,11 @@ async function showMainProgressMenu(interaction) {
         return response;
 
     } catch (error) {
-        console.error('Error showing main menu:', error);
-
-        if (interaction.deferred || interaction.replied) {
-            try {
-                await interaction.editReply({
-                    content: '❌ Error loading menu.',
-                    components: [],
-                    flags: MessageFlags.IsComponentsV2
-                });
-            } catch (editError) {}
+        if (error.code === 10062) {
+            console.log('⚠️ Interaction expired in main menu');
+            return;
         }
-        throw error;
+        console.error('Error showing main menu:', error);
     }
 }
 
@@ -139,11 +172,24 @@ async function showMainProgressMenu(interaction) {
 
 async function showChallengesProgress(interaction) {
     try {
+        // التحقق من التفاعل
+        if (!interaction || interaction.ended) {
+            console.log('❌ Interaction ended for challenges');
+            return;
+        }
+
         const userId = interaction.user.id;
         const guildId = interaction.guild?.id;
 
-        const message = interaction.message;
-        const targetInteraction = message ? interaction : interaction;
+        // محاولة deferUpdate فقط إذا لم يتم الرد بعد
+        if (!interaction.replied && !interaction.deferred) {
+            try {
+                await interaction.deferUpdate();
+            } catch (deferError) {
+                console.log('⚠️ Cannot defer update, continuing...');
+                // لا تخرج من الدالة، استمر
+            }
+        }
 
         const challengeData = await dbManager.getGlobalChallengeWithTargets(guildId);
 
@@ -266,11 +312,15 @@ async function showChallengesProgress(interaction) {
             flags: MessageFlags.IsComponentsV2
         });
 
-        if (message) {
-            createCollectorForPage(message, userId, 'challenges');
-        }
+        // إنشاء collector جديد
+        const message = await interaction.fetchReply();
+        createCollectorForPage(message, userId, 'challenges');
 
     } catch (error) {
+        if (error.code === 10062) {
+            console.log('⚠️ Interaction expired in challenges');
+            return;
+        }
         console.error('Error showing challenges progress:', error);
     }
 }
@@ -279,10 +329,23 @@ async function showChallengesProgress(interaction) {
 
 async function showCratesProgress(interaction) {
     try {
+        // التحقق من التفاعل
+        if (!interaction || interaction.ended) {
+            console.log('❌ Interaction ended for crates');
+            return;
+        }
+
         const userId = interaction.user.id;
 
-        const message = interaction.message;
-        const targetInteraction = message ? interaction : interaction;
+        // محاولة deferUpdate فقط إذا لم يتم الرد بعد
+        if (!interaction.replied && !interaction.deferred) {
+            try {
+                await interaction.deferUpdate();
+            } catch (deferError) {
+                console.log('⚠️ Cannot defer update, continuing...');
+                // لا تخرج من الدالة، استمر
+            }
+        }
 
         const dropProgress = await dbManager.getUserDropProgress(userId);
 
@@ -321,9 +384,9 @@ async function showCratesProgress(interaction) {
                 flags: MessageFlags.IsComponentsV2
             });
 
-            if (message) {
-                createCollectorForPage(message, userId, 'crates');
-            }
+            // إنشاء collector جديد
+            const message = await interaction.fetchReply();
+            createCollectorForPage(message, userId, 'crates');
             return;
         }
 
@@ -414,11 +477,15 @@ async function showCratesProgress(interaction) {
             flags: MessageFlags.IsComponentsV2
         });
 
-        if (message) {
-            createCollectorForPage(message, userId, 'crates');
-        }
+        // إنشاء collector جديد
+        const message = await interaction.fetchReply();
+        createCollectorForPage(message, userId, 'crates');
 
     } catch (error) {
+        if (error.code === 10062) {
+            console.log('⚠️ Interaction expired in crates');
+            return;
+        }
         console.error('Error showing crates progress:', error);
     }
 }
@@ -428,7 +495,7 @@ async function showCratesProgress(interaction) {
 function createCollectorForPage(message, userId, currentPage) {
     const collector = message.createMessageComponentCollector({
         componentType: ComponentType.Button,
-        time: 60000,
+        time: 30000, // قلل الوقت إلى 30 ثانية
         filter: (i) => i.user.id === userId
     });
 
@@ -436,15 +503,27 @@ function createCollectorForPage(message, userId, currentPage) {
         try {
             if (!i.isButton()) return;
 
-            try {
-                await i.deferUpdate();
-            } catch (deferError) {
-                console.log('⚠️ Page collector defer failed:', deferError.message);
+            // تحقق من عمر التفاعل
+            if (i.createdTimestamp < Date.now() - 5000) {
+                console.log('⚠️ Interaction too old, ignoring');
                 return;
             }
 
+            try {
+                await i.deferUpdate();
+            } catch (deferError) {
+                if (deferError.code === 10062) {
+                    console.log('⚠️ Interaction expired in collector');
+                    return;
+                }
+                console.log('⚠️ Page collector defer failed:', deferError.message);
+                // استمر في المعالجة
+            }
+
+            // إذا كان الزر محظورًا (مختار بالفعل) لا تفعل شيء
             if ((currentPage === 'challenges' && i.customId === 'progress_challenges') ||
                 (currentPage === 'crates' && i.customId === 'progress_crates')) {
+                console.log('⚠️ Button already selected');
                 return;
             }
 
@@ -457,6 +536,10 @@ function createCollectorForPage(message, userId, currentPage) {
                     break;
             }
         } catch (error) {
+            if (error.code === 10062) {
+                console.log('⚠️ Interaction expired in collector handler');
+                return;
+            }
             console.error('Error in page collector:', error);
         }
     });

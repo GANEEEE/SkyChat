@@ -43,77 +43,9 @@ module.exports = {
           console.log(`🔄 Button: ${interaction.customId}`);
 
         try {
-          // 1. زر بدء التحقق من البانل
-          if (interaction.customId === 'start_verification_panel') {
-            //console.log(`🎮 Start verification panel button pressed`);
-
-            const verifyCommand = client.commands.get('verify');
-            if (verifyCommand?.startVerificationFromPanel) {
-              await verifyCommand.startVerificationFromPanel(interaction);
-              return;
-            } else {
-              console.log(`❌ Verify command not found or no startVerificationFromPanel method`);
-            }
-          }
-
-          // 2. معالجة أزرار CAPTCHA الخاصة بـ verify
-          else if (interaction.customId.startsWith('captcha_verify,')) {
-            //console.log(`🔢 CAPTCHA button pressed: ${interaction.customId}`);
-
-            const verifyCommand = client.commands.get('verify');
-            if (verifyCommand?.captchaHandler) {
-              await verifyCommand.captchaHandler(interaction);
-              return;
-            }
-          }
-
-          // 3. معالجة أزرار إدخال الرابط الخاص بالبانل
-          else if (interaction.customId === 'verify_enter_link_panel') {
-            //console.log(`🔗 Panel link button pressed`);
-
-            const verifyCommand = client.commands.get('verify');
-            if (verifyCommand?.buttonHandler) {
-              await verifyCommand.buttonHandler(interaction);
-              return;
-            }
-          }
-
-          // 4. معالجة أزرار إدخال الرابط الخاص بالأمر (/verify me)
-          else if (interaction.customId === 'verify_enter_link_cmd') {
-            //console.log(`🔗 /verify me link button pressed`);
-
-            const verifyCommand = client.commands.get('verify');
-            if (verifyCommand?.buttonHandler) {
-              await verifyCommand.buttonHandler(interaction);
-              return;
-            }
-          }
-
-          else if (interaction.customId === 'simple_start_verification' || 
-                interaction.customId.startsWith('simple_verify_')) {
-                console.log(`🔄 Simple verify button: ${interaction.customId}`);
-
-                const verifySimpleCommand = client.commands.get('verifycode');
-                if (verifySimpleCommand?.buttonHandler) {
-                    await verifySimpleCommand.buttonHandler(interaction);
-                    return;
-                }
-            }
-
-              // 3. أزرار testerspanel فقط
-              else if (interaction.customId.includes('tester_') || 
-                      interaction.customId.startsWith('approve_') || 
-                      interaction.customId.startsWith('reject_') ||
-                      interaction.customId.startsWith('close_')) {
-                  const testerspanelCommand = client.commands.get('testerspanel');
-                  if (testerspanelCommand?.buttonHandler) {
-                      await testerspanelCommand.buttonHandler(interaction);
-                      return;
-                  }
-              }
 
               // 👇 قسم خاص لـ shop (المتجر العادي)
-              else if (interaction.customId === 'shop_next_page' || 
+              if (interaction.customId === 'shop_next_page' || 
                    interaction.customId === 'shop_prev_page' || 
                    interaction.customId.startsWith('buy_item_') || 
                    interaction.customId.startsWith('refund_')) {
@@ -255,51 +187,7 @@ module.exports = {
         // ابحث عن الأمر المناسب بناءً على customId
         let commandName = '';
 
-        // 1. مودال التحقق من البانل
-        if (interaction.customId === 'verify_modal_verify_enter_link_panel') {
-          //console.log(`📋 Verify panel modal submitted`);
-
-          const verifyCommand = client.commands.get('verify');
-          if (verifyCommand?.modalHandler) {
-            await verifyCommand.modalHandler(interaction);
-            return;
-          }
-        }
-
-        // 2. مودال التحقق من الأمر (/verify me)
-        else if (interaction.customId === 'verify_modal_verify_enter_link_cmd') {
-          //console.log(`📋 /verify me modal submitted`);
-
-          const verifyCommand = client.commands.get('verify');
-          if (verifyCommand?.modalHandler) {
-            await verifyCommand.modalHandler(interaction);
-            return;
-          }
-        }
-
-        // 3. مودال طلب التستير الجديد
-        else if (interaction.customId === 'tester_application_form') {
-          //console.log(`📋 Tester application form submitted`);
-
-          const testerspanelCommand = client.commands.get('testerspanel');
-          if (testerspanelCommand?.modalHandler) {
-            await testerspanelCommand.modalHandler(interaction);
-            return;
-          }
-        }
-
-        // 4. مودال سبب إغلاق السبريد
-        else if (interaction.customId.startsWith('close_reason_modal_')) {
-          //console.log(`📋 Thread close reason modal submitted`);
-
-          const testerspanelCommand = client.commands.get('testerspanel');
-          if (testerspanelCommand?.modalHandler) {
-            await testerspanelCommand.modalHandler(interaction);
-            return;
-          }
-        }
-
-        else if (interaction.customId.startsWith('shop_')) {
+        if (interaction.customId.startsWith('shop_')) {
             console.log(`🛒 Shop modal: ${interaction.customId}`);
 
             const shopCommand = client.commands.get('shopedit');

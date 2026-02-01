@@ -17,7 +17,7 @@ module.exports = {
 
         // 1. الأساسيات فقط
         client.user.setPresence({
-            activities: [{ name: 'Starting Systems...', type: ActivityType.Watching }],
+            activities: [{ name: 'Connected to the skywaves', type: ActivityType.Listening }],
             status: 'online'
         });
 

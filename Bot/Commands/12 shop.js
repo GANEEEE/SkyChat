@@ -11,6 +11,7 @@ const {
 } = require('discord.js');
 const dbManager = require('../Data/database');
 const { couponSystem } = require('../LevelSystem/couponsystem');
+const skyBreakGuard = require('../System/SkyBreak');
 
 const SHOP_LOG_CHANNEL_ID = '1434904222805004411';
 
@@ -878,6 +879,36 @@ module.exports = {
                 });
             }
 
+            // ============ 🔒 **SKY BREAK SECURITY CHECK** ============
+            console.log(`🔍 Checking Sky Break security for ${interaction.user.tag}`);
+
+            const securityCheck = await skyBreakGuard.validatePurchase(
+                interaction.user,
+                interaction.guild,
+                item.role_id
+            );
+
+            console.log(`📊 Security check result:`, {
+                allowed: securityCheck.allowed,
+                isSkyBreak: securityCheck.isSkyBreak,
+                hasChampionRest: securityCheck.hasChampionRest
+            });
+
+            if (!securityCheck.allowed && securityCheck.isSkyBreak) {
+                console.log(`🚫 PURCHASE BLOCKED for ${interaction.user.tag}: Missing ChampionRest`);
+
+                return await interaction.followUp({
+                    embeds: [securityCheck.embed],
+                    ephemeral: false
+                });
+            }
+
+            if (securityCheck.allowed && securityCheck.isSkyBreak) {
+                console.log(`✅ Sky Break purchase allowed for ${interaction.user.tag}`);
+                console.log(`ℹ️ ChampionRest will be removed after refund period`);
+            }
+            // ============ **END SECURITY CHECK** ============
+
             let couponDiscount = 0;
             let couponId = null;
 
@@ -1098,6 +1129,31 @@ module.exports = {
                                 console.error('❌ Error applying buff:', error.message);
                             }
                         }
+
+                        // ============ 🔄 **REMOVE CHAMPIONREST AFTER PURCHASE** ============
+                        if (item.role_id === skyBreakGuard.SKY_BREAK_ROLE_ID) {
+                            console.log(`🎯 This is a Sky Break purchase - checking ChampionRest removal...`);
+
+                            try {
+                                const removalResult = await skyBreakGuard.removeChampionRestAfterPurchase(
+                                    interaction.user.id,
+                                    interaction.guild
+                                );
+
+                                if (removalResult.success) {
+                                    if (removalResult.removed) {
+                                        console.log(`✅ Successfully removed ChampionRest from ${interaction.user.tag}`);
+                                    } else {
+                                        console.log(`ℹ️ ${interaction.user.tag} didn't have ChampionRest (already removed or never had)`);
+                                    }
+                                } else {
+                                    console.log(`⚠️ Failed to remove ChampionRest: ${removalResult.error}`);
+                                }
+                            } catch (removeError) {
+                                console.error(`💥 Error in ChampionRest removal:`, removeError);
+                            }
+                        }
+                        // ============ **END CHAMPIONREST REMOVAL** ============
 
                         // ثم تحديث الرسالة
                         const updated = await shopSessionManager.updateMessageToCelebration(refundMessage.id);

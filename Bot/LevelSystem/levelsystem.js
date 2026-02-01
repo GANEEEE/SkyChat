@@ -11,7 +11,7 @@ class SimpleLevelSystem {
         // ⭐ تعديل Level System لبدء من Level 0
         this.levels = [
             { level: 0, xp: 0, roleId: null }, // Level 0 - بدون رول
-            { level: 1, xp: 150, roleId: "1465705327801532416" },
+            { level: 1, xp: 150, roleId: "1453692596785254480" },
             { level: 2, xp: 450, roleId: "1465705382658838724" },
             { level: 3, xp: 900, roleId: "1465705413117739018" },
             { level: 4, xp: 1500, roleId: "1465705447666225383" },

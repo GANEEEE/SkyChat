@@ -196,7 +196,7 @@ const GLOBAL_BUFF_SYSTEM = {
         { roleId: "1465705074343809096", bonus: "Prove you follow on Steam Page" },
         { roleId: "1465705124176597075", bonus: "Prove you follow on Reddit Page (Not Official Yet)" },
         { roleId: "1466171805869019137", bonus: "Send 10,000 messages" },
-        { roleId: "1394820196375593122", bonus: "Host A Community Giveaway" },
+        { roleId: "1394820196375593122", bonus: "Host A 5 Successful Community Giveaway" },
         { roleId: "1441450267965915296", bonus: "Vote for the server every 12 hours by /vote" },
         { roleId: "1465800603224510536", bonus: "Get 100 Daily Streaks" }
     ],

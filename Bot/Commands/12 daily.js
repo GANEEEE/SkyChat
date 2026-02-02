@@ -147,7 +147,7 @@ module.exports = {
                 const timeDiff = now - lastDaily;
                 const hoursDiff = timeDiff / (1000 * 60 * 60);
 
-                // ========== ⭐⭐ نظام 48 ساعة بدلاً من 24 ساعة ⭐⭐ ==========
+                // ========== نظام 48 ساعة بدلاً من 24 ساعة ==========
 
                 // 1. إذا مر أقل من 24 ساعة → كولدوان
                 if (hoursDiff < 24) {
@@ -190,15 +190,15 @@ module.exports = {
                             section
                                 .addTextDisplayComponents(
                                     (textDisplay) =>
-                                        textDisplay.setContent(`## ⏳ Daily Reward Locked`),
+                                        textDisplay.setContent(`## ⏳ Daily Reward Locked`)
+                                )
+                                .addTextDisplayComponents(
                                     (textDisplay) =>
-                                        textDisplay.setContent(`🪙 Coins: \`${formattedCoins}\` | 🔥 Streak: \`${currentStreak}/100\``),
+                                        textDisplay.setContent(`🪙 Coins: \`${formattedCoins}\` | 🔥 Streak: \`${currentStreak}/100\``)
+                                )
+                                .addTextDisplayComponents(
                                     (textDisplay) =>
-                                        textDisplay.setContent(`⏰ **Next Reward In:** \`${timeString.trim() || 'Ready!'}\``),
-                                    (textDisplay) =>
-                                        textDisplay.setContent(`📢 **NEW:** You have 48 hours total to claim!`),
-                                    (textDisplay) =>
-                                        textDisplay.setContent(`*After 48 hours, your streak will reset*`)
+                                        textDisplay.setContent(`⏰ **Next Reward In:** \`${timeString.trim() || 'Ready!'}\``)
                                 )
                                 .setThumbnailAccessory((thumbnail) =>
                                     thumbnail
@@ -245,7 +245,7 @@ module.exports = {
                         userAvatar, 
                         newStreak, 
                         oldStreak, 
-                        false  // streakWasBroken = false
+                        false
                     );
                 }
                 // 3. إذا مر أكثر من 48 ساعة → قطع الستريك
@@ -274,24 +274,13 @@ module.exports = {
                         userAvatar, 
                         newStreak, 
                         oldStreak, 
-                        true  // streakWasBroken = true
+                        true
                     );
                 }
             }
 
             // حساب الـ Streak الجديد (إذا مر 24 ساعة بالضبط)
             let newStreak = oldStreak + 1;
-            let streakMessage = '';
-
-            if (!lastDaily) {
-                // أول مرة يطالب
-                newStreak = 1;
-                streakMessage = '🎉 First daily claim!';
-            } else {
-                // استمرار الستريك
-                newStreak = Math.min(oldStreak + 1, 100);
-                streakMessage = `🔥 Streak: ${oldStreak} → ${newStreak}`;
-            }
 
             // معالجة المكافأة اليومية
             return await this.processDailyReward(
@@ -326,8 +315,8 @@ module.exports = {
             const now = new Date();
 
             // ========== 1. حساب المكافآت الأساسية ==========
-            const baseCoins = Math.floor(Math.random() * 11) + 15; // 15-25
-            const baseXP = Math.floor(Math.random() * 21) + 20; // 20-40
+            const baseCoins = Math.floor(Math.random() * 11) + 15;
+            const baseXP = Math.floor(Math.random() * 21) + 20;
 
             // تطبيق مضاعف الـ streak
             const streakBonus = this.calculateStreakBonus(newStreak);
@@ -353,23 +342,18 @@ module.exports = {
                 }
             }
 
-            // ========== ⭐⭐ 4. تطبيق الـ Boost على المكافأة اليومية ⭐⭐ ==========
+            // ========== 4. تطبيق الـ Boost على المكافأة اليومية ==========
             let boostMultiplier = { xp: 1.0, coins: 1.0 };
             if (activeBoost) {
                 boostMultiplier = activeBoost.multiplier;
             }
 
-            // ⭐⭐ الجديد: تطبيق جميع المضاعفات معاً ⭐⭐
             const finalCoins = Math.round(
-                baseCoins *                      // القاعدة الأساسية (15-25)
-                streakBonus.bonusMultiplier *    // مضاعف الستريك (حسب الأيام)
-                boostMultiplier.coins            // مضاعف البوست (في أيام خاصة)
+                baseCoins * streakBonus.bonusMultiplier * boostMultiplier.coins
             );
 
             const finalXP = Math.round(
-                baseXP *                         // القاعدة الأساسية (20-40)  
-                streakBonus.bonusMultiplier *    // مضاعف الستريك (حسب الأيام)
-                boostMultiplier.xp               // مضاعف البوست (في أيام خاصة)
+                baseXP * streakBonus.bonusMultiplier * boostMultiplier.xp
             );
 
             console.log(`💰 ${username} Daily Calculation (Day ${newStreak}):`);
@@ -434,7 +418,7 @@ module.exports = {
                         ? `## 🔄 Streak Reset - Day ${newStreak}`
                         : `## ${tierEmoji} Daily Reward - Day ${newStreak}`;
 
-                    // ⭐⭐ رسالة التأخير إذا كان بين 24-48 ساعة ⭐⭐
+                    // رسالة التأخير إذا كان بين 24-48 ساعة
                     const lastDailyData = userData;
                     const lastClaim = lastDailyData?.last_daily;
                     if (lastClaim && !streakWasBroken) {
@@ -449,7 +433,10 @@ module.exports = {
                     }
 
                     section.addTextDisplayComponents(
-                        (textDisplay) => textDisplay.setContent(title),
+                        (textDisplay) => textDisplay.setContent(title)
+                    );
+
+                    section.addTextDisplayComponents(
                         (textDisplay) => textDisplay.setContent(`🪙 **+${finalCoins}** | ✨ **+${finalXP} XP** | 🔥 **Streak: ${newStreak}/100**`)
                     );
 
@@ -459,7 +446,7 @@ module.exports = {
                         );
                     }
 
-                    // ⭐⭐ عرض تفاصيل الحساب ⭐⭐
+                    // عرض تفاصيل الحساب
                     if (activeBoost || streakBonus.bonusMultiplier > 1.0) {
                         let calculationText = '';
 
@@ -704,7 +691,7 @@ module.exports = {
     },
 
     /**
-     * ⭐⭐ إدارة رولز الـ streak مع إزالة القديم ⭐⭐
+     * إدارة رولز الـ streak مع إزالة القديم
      */
     async manageStreakRoles(interaction, newStreak, oldStreak, streakWasBroken = false) {
         try {
@@ -732,7 +719,7 @@ module.exports = {
                 return result;
             }
 
-            // ⭐⭐ إزالة الرول القديم إذا كان موجوداً ⭐⭐
+            // إزالة الرول القديم إذا كان موجوداً
             if (oldTier !== 'none') {
                 const oldRole = this.STREAK_ROLES.find(r => r.name.toLowerCase() === oldTier);
                 if (oldRole && oldRole.roleId) {
@@ -767,7 +754,7 @@ module.exports = {
     },
 
     /**
-     * ⭐⭐ إزالة كل رولز الـ streak ⭐⭐
+     * إزالة كل رولز الـ streak
      */
     async removeAllStreakRoles(interaction) {
         try {
@@ -845,7 +832,7 @@ module.exports = {
     },
 
     /**
-     * ⭐⭐ تطبيق الـ Daily Boost ⭐⭐
+     * تطبيق الـ Daily Boost
      */
     async applyDailyBoost(userId, boostConfig, streakDay) {
         try {
@@ -854,11 +841,11 @@ module.exports = {
             let expiresAt = null;
 
             if (boostConfig.duration > 0) {
-                durationMinutes = boostConfig.duration * 24 * 60; // تحويل الأيام إلى دقائق
+                durationMinutes = boostConfig.duration * 24 * 60;
                 expiresAt = new Date(Date.now() + boostConfig.duration * 24 * 60 * 60 * 1000).toISOString();
             } else {
                 // دائم
-                durationMinutes = 365 * 24 * 60; // سنة كاملة (لكن null في expiresAt)
+                durationMinutes = 365 * 24 * 60;
                 expiresAt = null;
             }
 
@@ -905,7 +892,7 @@ module.exports = {
     },
 
     /**
-     * ⭐⭐ منح كوبون streak ⭐⭐
+     * منح كوبون streak
      */
     async awardStreakCoupon(userId, username, streakDay, interaction = null) {
         try {
@@ -925,31 +912,27 @@ module.exports = {
             let expiresAt = new Date();
             let validForDays = couponConfig.duration;
 
-            // ⭐⭐ معالجة خاصة ليوم 100 (Immortal)
+            // معالجة خاصة ليوم 100 (Immortal)
             if (streakDay === 100) {
-                // يوم 100: كوبون 50% لمدة شهر
-                discountPercentage = 50; // ثابت 50%
-                validForDays = 30; // 30 يوم
+                discountPercentage = 50;
+                validForDays = 30;
             }
 
             // حساب تاريخ الانتهاء
             if (validForDays > 0) {
                 expiresAt.setDate(expiresAt.getDate() + validForDays);
             } else {
-                // إذا duration = 0 (دائم)، لا ينتهي أبداً
                 expiresAt.setFullYear(expiresAt.getFullYear() + 100);
-                validForDays = 0; // للإشارة أنه دائم
+                validForDays = 0;
             }
 
             // توليد كود الكوبون
             couponCode = this.generateCouponCode();
 
-            // ⭐⭐ محاولة استخدام couponSystem إذا موجود
+            // محاولة استخدام couponSystem إذا موجود
             let usedCouponSystem = false;
 
-            // تحقق إذا couponSystem موجود (بطريقة آمنة)
             try {
-                // إذا couponSystem معرف عالمياً
                 if (global.couponSystem && typeof global.couponSystem.createCoupon === 'function') {
                     const result = await global.couponSystem.createCoupon(
                         userId,
@@ -973,7 +956,7 @@ module.exports = {
                 console.log(`⚠️ CouponSystem error: ${sysError.message}`);
             }
 
-            // ⭐⭐ حفظ الكوبون في الداتابيز
+            // حفظ الكوبون في الداتابيز
             await dbManager.run(
                 `INSERT INTO shop_coupons 
                  (coupon_code, user_id, username, discount_percentage, 
@@ -985,9 +968,9 @@ module.exports = {
                     username,
                     discountPercentage,
                     expiresAt.toISOString(),
-                    `streak_${couponConfig.type}_day${streakDay}`, // مصدر واضح
-                    false, // is_used
-                    'ALL' // applicable_item_id = ALL لأي منتج
+                    `streak_${couponConfig.type}_day${streakDay}`,
+                    false,
+                    'ALL'
                 ]
             );
 
@@ -997,7 +980,7 @@ module.exports = {
             console.log(`   Duration: ${validForDays > 0 ? `${validForDays} days` : 'Permanent'}`);
             console.log(`   Source: ${usedCouponSystem ? 'CouponSystem' : 'Direct DB'}`);
 
-            // ⭐⭐ إرسال DM للمستخدم
+            // إرسال DM للمستخدم
             try {
                 const user = interaction?.client?.users?.fetch?.(userId);
                 if (user) {
@@ -1030,17 +1013,16 @@ module.exports = {
     },
 
     /**
-     * ⭐⭐ منح الكريتات اليومية ⭐⭐
+     * منح الكريتات اليومية
      */
     async awardDailyCrates(userId, username, streakDay) {
         try {
             const crateRewards = [];
 
-            // ========== حالة خاصة: بعد اليوم 100 ==========
+            // حالة خاصة: بعد اليوم 100
             if (streakDay > 100) {
                 const randomCrate = this.getRandomPost100Crate();
                 if (randomCrate) {
-                    // إنشاء الكريت
                     for (let i = 0; i < randomCrate.count; i++) {
                         const crateResult = await dbManager.createCrate(userId, username, randomCrate.type);
                         if (crateResult.success) {
@@ -1053,18 +1035,15 @@ module.exports = {
                     }
                 }
             } 
-            // ========== الأيام العادية ==========
+            // الأيام العادية
             else {
-                // البحث عن كريتات اليوم
                 const dayCrates = this.STREAK_CRATES.find(c => c.day === streakDay);
 
                 if (dayCrates && dayCrates.crates.length > 0) {
                     for (const crateConfig of dayCrates.crates) {
-                        // إنشاء الكريتات
                         for (let i = 0; i < crateConfig.count; i++) {
                             const crateResult = await dbManager.createCrate(userId, username, crateConfig.type);
                             if (crateResult.success) {
-                                // إضافة إلى المكافآت
                                 const existing = crateRewards.find(r => r.type === crateConfig.type);
                                 if (existing) {
                                     existing.count++;
@@ -1094,7 +1073,7 @@ module.exports = {
     },
 
     /**
-     * ⭐⭐ الحصول على كريت عشوائي بعد اليوم 100 ⭐⭐
+     * الحصول على كريت عشوائي بعد اليوم 100
      */
     getRandomPost100Crate() {
         const random = Math.random() * 100;
@@ -1110,7 +1089,6 @@ module.exports = {
             }
         }
 
-        // الإفتراضي
         return {
             type: 'rare',
             count: 1

@@ -61,7 +61,7 @@ module.exports = {
                       `API: ${apiLatency} ms\n` +
 
                       '```\n' +
-                      '-# Powered by SkyCore'
+                      '-# Powered by SkyChat'
                       /*'## **📈 STATUS**\n' +
                       `${statusEmoji} **${statusText}**\n\n` +
 

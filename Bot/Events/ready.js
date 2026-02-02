@@ -6,7 +6,6 @@ const chatXPSystem = require('../LevelSystem/chatsystem');
 const voiceXPSystem = require('../LevelSystem/voicesystem');
 const bumpHandler = require('../LevelSystem/bumpsystem');
 const voteHandler = require('../LevelSystem/votesystem');
-const boostRewardHandler = require('../LevelSystem/boostingsystem');
 
 module.exports = {
   name: 'ready',
@@ -69,16 +68,7 @@ module.exports = {
             }
         });
 
-        // 6. نظام الـ Boosting
-        client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
-            try {
-                await boostRewardHandler.execute(oldMember, newMember, client);
-            } catch (error) {
-                console.error('❌ Error in boost reward handler:', error);
-            }
-        });
-
-        // 7. Shop Discount Lottery
+        // 8. Shop Discount Lottery
         try {
             console.log('🎰 Starting shop discount lottery...');
             const lotteryResult = await dbManager.runDailyDiscountLottery();
@@ -109,7 +99,7 @@ module.exports = {
             }
         }, 12 * 60 * 60 * 1000); // 12 ساعة
 
-        // 8. تنظيف التخفيضات القديمة
+        // 9. تنظيف التخفيضات القديمة
         try {
             const cleaned = await dbManager.cleanupOldDiscounts();
             if (cleaned > 0) {
@@ -119,7 +109,7 @@ module.exports = {
             console.error('❌ Cleanup error:', cleanupError.message);
         }
 
-        // 9. تنظيف الـ Buffs المنتهية دورياً
+        // 10. تنظيف الـ Buffs المنتهية دورياً
         try {
             console.log('🧹 Starting expired buffs cleanup job...');
 
@@ -146,7 +136,7 @@ module.exports = {
             console.error('❌ Failed to start buff cleanup job:', error);
         }
 
-        // 10. إعادة ضبط حدود الـ XP اليومية
+        // 11. إعادة ضبط حدود الـ XP اليومية
         console.log('🔄 Setting up daily XP limits reset...');
 
         // إعادة ضبط أولية بعد 5 ثواني

@@ -87,15 +87,6 @@ class GlobalChallengeManager {
                 createMessage: this.createHiddenMessageV2.bind(this),
                 processWin: this.processAnswerWin.bind(this)
             },
-            'lucky_number': {
-                name: 'LUCKY NUMBER',
-                emoji: '🎯',
-                category: 'between',
-                duration: 30,
-                generateData: this.generateLuckyNumberData.bind(this),
-                createMessage: this.createLuckyMessageV2.bind(this),
-                processWin: this.processAnswerWin.bind(this)
-            },
             'random_keyword': {
                 name: 'RANDOM KEYWORD',
                 emoji: '🌀',
@@ -120,12 +111,12 @@ class GlobalChallengeManager {
                 name: 'VOICE PARTY',
                 emoji: '🎧',
                 category: 'voice',
-                duration: 600,
+                duration: 1500,
                 generateData: this.generateVoiceJoinData.bind(this),
                 createMessage: this.createVoiceJoinMessageV2.bind(this),
                 processWin: this.processMultiVoiceJoinWin.bind(this),
-                minStayRequired: 120,
-                maxStayRequired: 180
+                minStayRequired: 600,
+                maxStayRequired: 900
             },
 
             // 🌌 NEBULA CHALLENGES (400-600 messages)
@@ -260,8 +251,8 @@ class GlobalChallengeManager {
             'comet-nebula': { xp: { min: 50, max: 70 }, coins: { min: 35, max: 50 } },
             'nebula-meteoroid': { xp: { min: 80, max: 100 }, coins: { min: 60, max: 100 } },
             'voice-join': { 
-                xp: { min: 100, max: 300 }, 
-                coins: { min: 150, max: 350 },
+                xp: { min: 100, max: 200 }, 
+                coins: { min: 150, max: 250 },
                 crystalChance: 0.1
             }
         };
@@ -559,9 +550,6 @@ class GlobalChallengeManager {
             case 'find_word':
                 return data.answer.toLowerCase();
 
-            case 'lucky_number':
-                return data.correct.toString();
-
             case 'random_keyword':
                 return data.keyword.toLowerCase();
 
@@ -595,10 +583,10 @@ class GlobalChallengeManager {
 
     selectBetweenChallenge(eventType = 'star') {
         const challenges = {
-            'before_star': ['hidden_text', 'lucky_number', 'random_keyword', 'fast_typing'],
-            'star_comet': ['hidden_text', 'lucky_number', 'random_keyword', 'fast_typing'],
-            'comet_nebula': ['hidden_text', 'lucky_number', 'random_keyword', 'fast_typing'],
-            'nebula_meteoroid': ['hidden_text', 'lucky_number', 'random_keyword', 'fast_typing'],
+            'before_star': ['hidden_text', 'random_keyword', 'fast_typing'],
+            'star_comet': ['hidden_text', 'random_keyword', 'fast_typing'],
+            'comet_nebula': ['hidden_text', 'random_keyword', 'fast_typing'],
+            'nebula_meteoroid': ['hidden_text', 'random_keyword', 'fast_typing'],
             'voice_challenge': ['first_voice_join']
         };
 
@@ -818,7 +806,7 @@ class GlobalChallengeManager {
                     `👥 **Participants (${challenge.voiceData.participants.size}):**\n` +
                     `${this.getVoiceParticipantsList(challenge)}\n\n` +
                     `🏆 **Winners:**\n-# Everyone who stays required minutes wins\n` +
-                    `### ⚠️ **Rules:**\n-# Join after start • Stay full time • No bots`
+                    `### ⚠️ **Rules:**\n-# Stay full time • No bots`
                 )
             );
 
@@ -1126,7 +1114,7 @@ class GlobalChallengeManager {
                         `👥 **Participants:**\n` +
                         `${this.getVoiceParticipantsList(challenge)}\n\n` +
                         `🏆 **Winners:**\n-# Everyone who stays required minutes wins\n` +
-                        `⚠️ **Rules:**\n-# Join after start • Stay full time • No bots`
+                        `⚠️ **Rules:**\n-# Stay full time • No bots`
                     )
                 );
 
@@ -1317,28 +1305,6 @@ createHiddenMessageV2(challenge, channel) {
                     `🔤 Letters: ${data.letters.join(' , ')}\n\n` +
                     `⏱️ Duration: ${challenge.info.duration}s\n\n` +
                     `-# ✏️ **Type the complete word lowercase in chat!**`
-                )
-            );
-
-        return {
-            components: [container],
-            flags: MessageFlags.IsComponentsV2
-        };
-    }
-
-    createLuckyMessageV2(challenge, channel) {
-        const color = 0x00BFFF;
-
-        const container = new ContainerBuilder()
-            .setAccentColor(color)
-            .addTextDisplayComponents((textDisplay) =>
-                textDisplay.setContent(
-                    `## ${challenge.info.emoji} ${challenge.levelTag} CHALLENGE\n\n\n` +
-                    `💡 **Guess the lucky number!**\n` +
-                    `\`\`\`I'm thinking of a number between 1 and 100\`\`\`\n` +
-                    `⏱️ Duration: ${challenge.info.duration}s\n\n` +
-                    `-# ✏️ **Type your guess (1-100) in chat!**`
-
                 )
             );
 
@@ -1727,11 +1693,6 @@ createHiddenMessageV2(challenge, channel) {
             case 'find_word':
                     isCorrect = normalizedAnswer === challenge.data.answer.toLowerCase();
                     break;
-
-            case 'lucky_number':
-                const guess = parseInt(normalizedAnswer);
-                isCorrect = !isNaN(guess) && guess === challenge.data.correct;
-                break;
 
             case 'random_keyword':
                 isCorrect = normalizedAnswer === challenge.data.keyword.toLowerCase();
@@ -2280,15 +2241,6 @@ createHiddenMessageV2(challenge, channel) {
                 source: 'fallback'
             };
         }
-    }
-
-    generateLuckyNumberData() {
-        const correct = this.getRandomBetween(1, 100);
-
-        return {
-            correct: correct,
-            range: "1-100"
-        };
     }
 
     generateKeywordData() {

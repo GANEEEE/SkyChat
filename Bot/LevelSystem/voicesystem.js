@@ -12,9 +12,9 @@ let cleanupInterval = null;
 // ========== CONFIGURATION ==========
 const CONFIG = {
     // التوقيتات
-    REWARD_INTERVAL: 240000, // كل 4 دقائق (240000 مللي ثانية)
-    CHECK_INTERVAL: 300000,   // كل 5 دقائق بدل 30 ثانية
-    CLEANUP_INTERVAL: 600000, // تنظيف كل 10 دقائق
+    REWARD_INTERVAL: 1140000, // 19 دقيقة
+    CHECK_INTERVAL: 1200000,   // 20 دقيقة
+    CLEANUP_INTERVAL: 2460000, // 41 دقيقة
 
     // قنوات VIP (عدل IDs حسب احتياجك)
     VIP_CHANNEL_IDS: ['1423430294563721306', '1423430261043101777'],
@@ -26,7 +26,7 @@ const CONFIG = {
             MAX_XP: 3,
             MIN_COINS: 1,
             MAX_COINS: 3,
-            CRYSTAL_CHANCE: 0.05
+            CRYSTAL_CHANCE: 0.01
         },
         MUTED: {
             MIN_XP: 1,
@@ -37,16 +37,16 @@ const CONFIG = {
         },
         STREAM: {
             MIN_XP: 2,
-            MAX_XP: 5,
+            MAX_XP: 3,
             MIN_COINS: 2,
-            MAX_COINS: 5,
-            CRYSTAL_CHANCE: 0.1
+            MAX_COINS: 3,
+            CRYSTAL_CHANCE: 0.05
         },
         VIP_BONUSES: {
-            XP_MULTIPLIER: 1.5,
-            COINS_MULTIPLIER: 2.0,
+            XP_MULTIPLIER: 1.1,
+            COINS_MULTIPLIER: 1.5,
             CRYSTAL_CHANCE: 0.1,
-            STREAM_BONUS_MULTIPLIER: 2.0 // مضاعفة إضافية للستريم في القنوات VIP
+            STREAM_BONUS_MULTIPLIER: 1.2 // مضاعفة إضافية للستريم في القنوات VIP
         }
     }
 };

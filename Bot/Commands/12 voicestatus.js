@@ -68,12 +68,7 @@ module.exports = {
         // إضافة كل إحصائية كحقل منفصل
         embed.addFields(
             {
-                name: '👥 Users in Voice',
-                value: `**${activeUsers.length}**`,
-                inline: false
-            },
-            {
-                name: '🎙️ Active',
+                name: '🎙️ Talker',
                 value: `**${stats.activeUsers || 0}**`,
                 inline: true
             },
@@ -83,7 +78,7 @@ module.exports = {
                 inline: true
             },
             {
-                name: '📡 Streaming',
+                name: '🎥 Streaming',
                 value: `**${stats.streamingUsers || 0}**`,
                 inline: true
             },
@@ -119,7 +114,7 @@ module.exports = {
                 // تحديد الإيموجي المناسب
                 let emoji = '🎤'; // الافتراضي active
                 if (u.type === 'stream' || u.isStreaming) {
-                    emoji = '📡';
+                    emoji = '🎥';
                 } else if (u.type === 'muted') {
                     emoji = '🔇';
                 }

@@ -75,6 +75,26 @@ if (fs.existsSync(eventsPath)) {
     });
 }
 
+// ⭐⭐ أضف هنا ⭐⭐
+// ============ تسجيل نظام البوست ============
+const boostSystem = require('./Bot/LevelSystem/boostingsystem');
+
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+    console.log(`🎯 [Boost Event] ${newMember.user.tag} updated`);
+
+    try {
+        // تشغيل نظام البوست
+        await boostSystem.execute(oldMember, newMember, client);
+        console.log(`✅ Boost system executed for ${newMember.user.tag}`);
+    } catch (error) {
+        console.error('❌ Boost system error:', error);
+        console.error(error.stack);
+    }
+});
+
+console.log('✅ Boost system event handler registered');
+// ===========================================
+
 // الاتصال بقاعدة البيانات قبل تسجيل الدخول
 async function initializeDatabase() {
   try {

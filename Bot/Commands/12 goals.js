@@ -554,37 +554,9 @@ function createVisualProgressBar(current, total) {
 function simplifyDescription(goal) {
     if (!goal) return 'No description';
 
-    const description = goal.description || '';
-    const requirement = goal.assigned_requirement || goal.actualRequirement || 1;
+    const desc = goal.description || '';
+    const req = goal.assigned_requirement || goal.actualRequirement || 1;
 
-    // استخدام requirement من الداتا مباشرة
-    if (description.toLowerCase().includes('bump')) {
-        return `Bump ${requirement} times`;
-    } 
-    else if (description.toLowerCase().includes('send') || description.toLowerCase().includes('message')) {
-        return `Send ${requirement} messages`;
-    }
-    else if (description.toLowerCase().includes('claim') || description.toLowerCase().includes('drop')) {
-        return `Claim ${requirement} drops`;
-    }
-    else if (description.toLowerCase().includes('spend') || description.toLowerCase().includes('minute')) {
-        return `Spend ${requirement} minutes in voice`;
-    }
-    else if (description.toLowerCase().includes('get') || description.toLowerCase().includes('staff')) {
-        return `Get ${requirement} staff reactions`;
-    }
-    else if (description.toLowerCase().includes('earn') || description.toLowerCase().includes('coin')) {
-        return `Earn ${requirement} coins from drops`;
-    }
-    else if (description.toLowerCase().includes('reply') || description.toLowerCase().includes('different')) {
-        return `Reply to ${requirement} different people`;
-    }
-    else if (description.toLowerCase().includes('collect') || description.toLowerCase().includes('total')) {
-        return `Collect ${requirement} coins`;
-    }
-    else {
-        // لو ما عرفناش النوع، استخدم الوصف الأساسي
-        return description.replace(/\d+-\d+/, requirement.toString())
-                         .replace(/X/i, requirement.toString());
-    }
+    // إرجاع الوصف الأصلي مع استبدال الرقم فقط
+    return desc.replace(/\d+-\d+/, req.toString()).trim();
 }

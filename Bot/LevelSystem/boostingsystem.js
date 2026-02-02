@@ -11,7 +11,7 @@ module.exports = {
     name: 'guildMemberUpdate',
 
     async execute(oldMember, newMember, client) {
-        console.log('🚀 === BOOST SYSTEM CHECK ===');
+        //console.log('🚀 === BOOST SYSTEM CHECK ===');
 
         // Check if member started boosting
         if (!oldMember.premiumSince && newMember.premiumSince) {
@@ -35,8 +35,8 @@ async function giveBoostRewards(member, client) {
     try {
         console.log(`🎁 Calculating boost rewards for ${member.user.username}...`);
 
-        const xp = 75;
-        const coins = 1500;
+        const xp = 125;
+        const coins = 2000;
         const hasCrystal = calculateCrystalChance();
 
         // ⭐⭐ أرسل client هنا ⭐⭐
@@ -135,12 +135,7 @@ async function sendRewardMessage(member, xp, coins, hasCrystal, userData) {
             .addFields(
                 { 
                     name: '🎁 Boost Rewards', 
-                    value: `**${xp}** XP\n**${coins}** coins${hasCrystal ? '\n**1** Crystal' : ''}`,
-                    inline: true 
-                },
-                { 
-                    name: '💰 Current Balance', 
-                    value: `**${totalCoins}** coins\n**${totalCrystals}** crystals`,
+                    value: `**${coins}** Coins\n**${xp}** XP${hasCrystal ? '\n**1** Crystal' : ''}`,
                     inline: true 
                 }
             )

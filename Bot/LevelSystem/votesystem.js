@@ -265,13 +265,13 @@ async function sendRewardMessage(voteData, xp, coins, hasCrystal, userData, guil
             userAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
         }
 
-        const thankYouText = `## Thanks <@${voteData.userId}> for voting!`;
+        const thankYouText = `### Thanks <@${voteData.userId}> for voting!`;
 
-        let rewardsText = `### 🎁 **Rewards Received:**`;
-        rewardsText += `\n+${xp} XP`;
-        rewardsText += ` | ${coins} 🪙 Coins`;
+        let rewardsText = `**🎁 Rewards Received:**`;
+        rewardsText += `\n${xp} XP`;
+        rewardsText += ` ||&|| ${coins} 🪙 Coins`;
         if (hasCrystal) {
-            rewardsText += ` | +1 💎 Crystal`;
+            rewardsText += ` ||&|| 1 💎 Crystal`;
         }
 
         let thirdText = '';

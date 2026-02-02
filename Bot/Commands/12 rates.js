@@ -66,11 +66,11 @@ const CHAT_SYSTEM = {
 // 2. Voice System
 const VOICE_SYSTEM = {
     name: "🎤 Voice Rewards",
-    streamerRewards: "1 - 3 XP • 1 - 3 Coins • 0.1% Crystal chance",
-    activeRewards: "1 - 3 XP • 1 - 3 Coins • 0.05% Crystal chance",
+    streamerRewards: "2 - 4 XP • 2 - 4 Coins • 0.05% Crystal chance",
+    activeRewards: "1 - 3 XP • 1 - 3 Coins • 0.01% Crystal chance",
     mutedRewards: "1 - 2 XP • 1 - 2 Coins",
-    interval: "Every 5 minutes",
-    vipBonus: "+25% XP, +50% Coins in VIP channels",
+    interval: "Every 20 minutes",
+    vipBonus: "+1% XP, +50% Coins in VIP channels",
     dailyLimit: "500 XP, 750 Coins"
 };
 
@@ -96,22 +96,22 @@ const LEVEL_SYSTEM = {
     name: "📈 Level System",
     dailyLimits: "500 XP • 750 Coins",
     levels: [
-        { level: 0, xp: 0, roleId: null }, // Level 0 - بدون رول
-        { level: 1, xp: 150, roleId: "1465705327801532416" },
-        { level: 2, xp: 450, roleId: "1465705382658838724" },
-        { level: 3, xp: 900, roleId: "1465705413117739018" },
-        { level: 4, xp: 1500, roleId: "1465705447666225383" },
-        { level: 5, xp: 2400, roleId: "1465705479123636415" },
-        { level: 6, xp: 3600, roleId: "1465705518210224168" },
-        { level: 7, xp: 5200, roleId: "1465705556395163851" },
-        { level: 8, xp: 7500, roleId: "1465705620689649841" },
-        { level: 9, xp: 11000, roleId: "1465705698989179030" },
-        { level: 10, xp: 16000, roleId: "1465705733659164915" },
-        { level: 11, xp: 22000, roleId: "1465705763069493423" },
-        { level: 12, xp: 30000, roleId: "1465705800755445938" },
-        { level: 13, xp: 40000, roleId: "1465705829272518894" },
-        { level: 14, xp: 52000, roleId: "1465705879004381382" },
-        { level: 15, xp: 67000, roleId: "1465785463984886045" }
+        { level: 0, xp: 0, roleId: null },
+        { level: 1, xp: 250, roleId: "1453692596785254480" },
+        { level: 2, xp: 750, roleId: "1465705382658838724" },
+        { level: 3, xp: 1500, roleId: "1465705413117739018" },
+        { level: 4, xp: 2500, roleId: "1465705447666225383" },
+        { level: 5, xp: 5000, roleId: "1465705479123636415" },
+        { level: 6, xp: 10000, roleId: "1465705518210224168" },
+        { level: 7, xp: 20000, roleId: "1465705556395163851" },
+        { level: 8, xp: 35000, roleId: "1465705620689649841" },
+        { level: 9, xp: 55000, roleId: "1465705698989179030" },
+        { level: 10, xp: 80000, roleId: "1465705733659164915" },
+        { level: 11, xp: 110000, roleId: "1465705763069493423" },
+        { level: 12, xp: 145000, roleId: "1465705800755445938" },
+        { level: 13, xp: 185000, roleId: "1465705829272518894" },
+        { level: 14, xp: 230000, roleId: "1465705879004381382" },
+        { level: 15, xp: 280000, roleId: "1465785463984886045" }
     ]
 };
 

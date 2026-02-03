@@ -69,7 +69,7 @@ const VOICE_SYSTEM = {
     streamerRewards: "2 - 4 XP • 2 - 4 Coins • 0.05% Crystal chance",
     activeRewards: "1 - 3 XP • 1 - 3 Coins • 0.01% Crystal chance",
     mutedRewards: "1 - 2 XP • 1 - 2 Coins",
-    interval: "Every 20 minutes",
+    interval: "Every 30 minutes",
     vipBonus: "+1% XP, +50% Coins in VIP channels",
     dailyLimit: "500 XP, 750 Coins"
 };
@@ -200,7 +200,7 @@ const GLOBAL_BUFF_SYSTEM = {
         { roleId: "1441450267965915296", bonus: "Vote for the server every 12 hours by /vote" },
         { roleId: "1465800603224510536", bonus: "Get 100 Daily Streaks" }
     ],
-    effect: "Each role gives +1% reward, stackable"
+    effect: "Each role gives +0.5% reward, stackable"
 };
 
 // 10. Event System

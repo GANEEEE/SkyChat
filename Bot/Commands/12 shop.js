@@ -12,6 +12,7 @@ const {
 const dbManager = require('../Data/database');
 const { couponSystem } = require('../LevelSystem/couponsystem');
 const skyBreakGuard = require('../System/SkyBreak');
+const skyPassGuard = require('../System/SkyPass');
 
 const SHOP_LOG_CHANNEL_ID = '1434904222805004411';
 
@@ -1154,6 +1155,28 @@ module.exports = {
                             }
                         }
                         // ============ **END CHAMPIONREST REMOVAL** ============
+
+                        // ============ 🎟️ **SKYPASS TEMPROLE CONVERSION** ============
+                        if (item.role_id === skyPassGuard.SKY_PASS_ROLE_ID) {
+                            console.log(`🎟️ This is a SkyPass purchase - converting to ${skyPassGuard.DURATION} temprole...`);
+
+                            try {
+                                const conversionResult = await skyPassGuard.convertToTemprole(
+                                    interaction.guild,      // ⭐⭐ الجلد ⭐⭐
+                                    interaction.user.id,    // ⭐⭐ الـ ID ⭐⭐
+                                    item.role_id           // ⭐⭐ الـ Role ID ⭐⭐
+                                );
+
+                                if (conversionResult.success) {
+                                    console.log(`✅ Successfully converted SkyPass to temprole for ${interaction.user.tag}`);
+                                } else {
+                                    console.log(`⚠️ Failed to convert SkyPass: ${conversionResult.error}`);
+                                }
+                            } catch (skyPassError) {
+                                console.error(`💥 Error in SkyPass conversion:`, skyPassError);
+                            }
+                        }
+                        // ============ **END SKYPASS** ============
 
                         // ثم تحديث الرسالة
                         const updated = await shopSessionManager.updateMessageToCelebration(refundMessage.id);

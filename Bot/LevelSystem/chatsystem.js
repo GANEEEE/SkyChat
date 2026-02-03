@@ -358,7 +358,7 @@ class MessageProcessor {
 
             this.staffMembers.length = 0;
 
-            const staffRoleIds = ['1363754703648850011'];
+            const staffRoleIds = ['1465705479123636415'];
             let addedCount = 0;
 
             for (const roleId of staffRoleIds) {

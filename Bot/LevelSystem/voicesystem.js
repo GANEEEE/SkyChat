@@ -12,9 +12,9 @@ let cleanupInterval = null;
 // ========== CONFIGURATION ==========
 const CONFIG = {
     // التوقيتات
-    REWARD_INTERVAL: 1140000, // 19 دقيقة
-    CHECK_INTERVAL: 1200000,   // 20 دقيقة
-    CLEANUP_INTERVAL: 2460000, // 41 دقيقة
+    REWARD_INTERVAL: 1740000, // 29 دقيقة
+    CHECK_INTERVAL: 1800000,   // 30 دقيقة
+    CLEANUP_INTERVAL: 7260000, // 121 دقيقة
 
     // قنوات VIP (عدل IDs حسب احتياجك)
     VIP_CHANNEL_IDS: ['1423430294563721306', '1423430261043101777'],
@@ -393,7 +393,7 @@ async function distributeVoiceRewards() {
                     voiceUsers.set(userId, userData);
 
                     // تحديث المهام
-                    await dbManager.updateGoalProgress(userId, 'voice_minutes', 5);
+                    await dbManager.updateGoalProgress(userId, 'voice_minutes', 30);
 
                     // تسجيل النتيجة مع إيموجي مناسب
                     let statusEmoji = '🎤';

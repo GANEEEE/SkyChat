@@ -557,6 +557,11 @@ function simplifyDescription(goal) {
     const desc = goal.description || '';
     const req = goal.assigned_requirement || goal.actualRequirement || 1;
 
+    // ⭐⭐ إضافة هذا السطر فقط ⭐⭐
+    if (goal.req_type === 'voice_minutes') {
+        return `Spend ${req} minutes in voice`;
+    }
+
     // إرجاع الوصف الأصلي مع استبدال الرقم فقط
     return desc.replace(/\d+-\d+/, req.toString()).trim();
 }

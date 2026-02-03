@@ -120,7 +120,7 @@ const MISSION_TEMPLATES = {
             title: 'Voice Resident',
             description: 'Spend 24 - 48 hours in voice this week',
             req_type: 'voice_minutes',
-            req_min: 1440, req_max: 2880, // 5-8 ساعات
+            req_min: 1440, req_max: 2880,
             xp_min: 500, xp_max: 750,
             coins_min: 550, coins_max: 650,
             crystals_min: 1, crystals_max: 2,

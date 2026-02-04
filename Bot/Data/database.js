@@ -12,7 +12,7 @@ const MISSION_TEMPLATES = {
             req_min: 1, req_max: 2,
             xp_min: 80, xp_max: 100,
             coins_min: 40, coins_max: 60,
-            crystals_min: 0, crystals_max: 1,
+            crystals_min: 0, crystals_max: 0,
             bonus_chance: 0.20,
             bonus_type: 'add_crystal',
             bonus_value: 1
@@ -36,7 +36,7 @@ const MISSION_TEMPLATES = {
             req_min: 1, req_max: 2,
             xp_min: 90, xp_max: 130,
             coins_min: 70, coins_max: 100,
-            crystals_min: 0, crystals_max: 1,
+            crystals_min: 0, crystals_max: 0,
             bonus_chance: 0.10,
             bonus_type: 'multiply_xp',
             bonus_value: 2.0
@@ -99,7 +99,7 @@ const MISSION_TEMPLATES = {
             req_min: 8, req_max: 12,
             xp_min: 450, xp_max: 600,
             coins_min: 300, coins_max: 500,
-            crystals_min: 1, crystals_max: 2,
+            crystals_min: 0, crystals_max: 1,
             bonus_chance: 0.30,
             bonus_type: 'multiply_xp',
             bonus_value: 1.5
@@ -111,7 +111,7 @@ const MISSION_TEMPLATES = {
             req_min: 400, req_max: 600,
             xp_min: 550, xp_max: 800,
             coins_min: 600, coins_max: 750,
-            crystals_min: 1, crystals_max: 3,
+            crystals_min: 0, crystals_max: 1,
             bonus_chance: 0.35,
             bonus_type: 'add_coins',
             bonus_value: 200
@@ -123,7 +123,7 @@ const MISSION_TEMPLATES = {
             req_min: 1440, req_max: 2880,
             xp_min: 500, xp_max: 750,
             coins_min: 550, coins_max: 650,
-            crystals_min: 1, crystals_max: 2,
+            crystals_min: 0, crystals_max: 1,
             bonus_chance: 0.25,
             bonus_type: 'multiply_xp',
             bonus_value: 1.5
@@ -135,7 +135,7 @@ const MISSION_TEMPLATES = {
             req_min: 7, req_max: 10,
             xp_min: 350, xp_max: 450,
             coins_min: 300, coins_max: 500,
-            crystals_min: 0, crystals_max: 0,
+            crystals_min: 0, crystals_max: 1,
             bonus_chance: 0.20,
             bonus_type: 'multiply_coins',
             bonus_value: 1.5
@@ -147,7 +147,7 @@ const MISSION_TEMPLATES = {
             req_min: 12, req_max: 18,
             xp_min: 400, xp_max: 600,
             coins_min: 450, coins_max: 650,
-            crystals_min: 1, crystals_max: 2,
+            crystals_min: 0, crystals_max: 1,
             bonus_chance: 0.25,
             bonus_type: 'add_xp',
             bonus_value: 200
@@ -159,7 +159,7 @@ const MISSION_TEMPLATES = {
             req_min: 2500, req_max: 3500,
             xp_min: 300, xp_max: 500,
             coins_min: 250, coins_max: 400,
-            crystals_min: 2, crystals_max: 3,
+            crystals_min: 0, crystals_max: 1,
             bonus_chance: 0.25,
             bonus_type: 'add_xp',
             bonus_value: 150

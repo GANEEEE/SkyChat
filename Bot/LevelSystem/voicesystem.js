@@ -23,24 +23,24 @@ const CONFIG = {
     REWARDS: {
         ACTIVE: {
             MIN_XP: 1,
-            MAX_XP: 3,
+            MAX_XP: 2,
             MIN_COINS: 1,
-            MAX_COINS: 3,
+            MAX_COINS: 2,
             CRYSTAL_CHANCE: 0.01
         },
         MUTED: {
             MIN_XP: 1,
-            MAX_XP: 2,
+            MAX_XP: 1,
             MIN_COINS: 1,
-            MAX_COINS: 2,
+            MAX_COINS: 1,
             CRYSTAL_CHANCE: 0
         },
         STREAM: {
-            MIN_XP: 2,
+            MIN_XP: 1,
             MAX_XP: 3,
-            MIN_COINS: 2,
+            MIN_COINS: 1,
             MAX_COINS: 3,
-            CRYSTAL_CHANCE: 0.05
+            CRYSTAL_CHANCE: 0.02
         },
         VIP_BONUSES: {
             XP_MULTIPLIER: 1.1,
@@ -48,7 +48,10 @@ const CONFIG = {
             CRYSTAL_CHANCE: 0.1,
             STREAM_BONUS_MULTIPLIER: 1.2 // مضاعفة إضافية للستريم في القنوات VIP
         }
-    }
+    },
+
+    // ========== الشرط الجديد ==========
+    MIN_USERS_FOR_REWARDS: 3 // أقل عدد من المستخدمين الحقيقين المطلوبين لتوزيع المكافآت
 };
 
 // أنواع المستخدمين
@@ -60,6 +63,33 @@ const UserType = {
 
 // متغير لتتبع المستخدمين الذين وصلوا للحد اليومي
 const dailyLimitUsers = new Set();
+
+// ========== دالة جديدة للتحقق من عدد المستخدمين في القناة ==========
+
+function getRealUsersInChannel(channelId, guildId) {
+    if (!clientReference) return 0;
+
+    try {
+        const guild = clientReference.guilds.cache.get(guildId);
+        if (!guild) return 0;
+
+        const channel = guild.channels.cache.get(channelId);
+        if (!channel || !channel.isVoiceBased()) return 0;
+
+        let realUsers = 0;
+        for (const member of channel.members.values()) {
+            // عد فقط المستخدمين الحقيقين (ليسوا بوتات)
+            if (!member.user.bot) {
+                realUsers++;
+            }
+        }
+
+        return realUsers;
+    } catch (error) {
+        console.error('Error counting users in channel:', error.message);
+        return 0;
+    }
+}
 
 // ========== VOICE REWARDS CALCULATION ==========
 
@@ -336,93 +366,120 @@ async function distributeVoiceRewards() {
     let dailyLimitReachedCount = 0;
     let streamRewards = 0;
     let vipStreamRewards = 0;
+    let channelsSkipped = 0;
+
+    // تجميع المستخدمين حسب القناة
+    const usersByChannel = new Map();
 
     for (const [userId, userData] of voiceUsers.entries()) {
-        // تخطي المستخدمين الذين وصلوا للحد اليومي
-        if (dailyLimitUsers.has(userId) || userData.dailyLimitReached) {
-            continue;
+        if (!usersByChannel.has(userData.channelId)) {
+            usersByChannel.set(userData.channelId, []);
+        }
+        usersByChannel.get(userData.channelId).push({ userId, userData });
+    }
+
+    // معالجة كل قناة على حدة
+    for (const [channelId, usersInChannel] of usersByChannel.entries()) {
+        if (usersInChannel.length === 0) continue;
+
+        // التحقق من عدد المستخدمين الحقيقين في القناة (أول مستخدم في القناة)
+        const sampleUser = usersInChannel[0].userData;
+        const realUsersInChannel = getRealUsersInChannel(channelId, sampleUser.guildId);
+
+        // ========== الشرط الجديد ==========
+        if (realUsersInChannel < CONFIG.MIN_USERS_FOR_REWARDS) {
+            channelsSkipped++;
+            continue; // تخطي القناة بالكامل إذا عدد المستخدمين أقل من 3
         }
 
-        if (now >= userData.nextRewardTime) {
-            try {
-                // حساب المكافآت الأساسية
-                const baseReward = calculateVoiceReward(userData.userType, userData.isVIP);
+        // توزيع المكافآت على مستخدمي هذه القناة
+        for (const { userId, userData } of usersInChannel) {
+            // تخطي المستخدمين الذين وصلوا للحد اليومي
+            if (dailyLimitUsers.has(userId) || userData.dailyLimitReached) {
+                continue;
+            }
 
-                // جلب الجلدة
-                const guild = clientReference.guilds.cache.get(userData.guildId);
-                if (!guild) {
-                    console.log(`❌ Guild not found for user ${userId}`);
-                    continue;
-                }
+            if (now >= userData.nextRewardTime) {
+                try {
+                    // حساب المكافآت الأساسية
+                    const baseReward = calculateVoiceReward(userData.userType, userData.isVIP);
 
-                // تطبيق البافات
-                let userBuff = 0;
-                let finalReward = { ...baseReward };
+                    // جلب الجلدة
+                    const guild = clientReference.guilds.cache.get(userData.guildId);
+                    if (!guild) {
+                        console.log(`❌ Guild not found for user ${userId}`);
+                        continue;
+                    }
 
-                if (buffSystem) {
-                    try {
-                        userBuff = await buffSystem.getBuff(userId, guild);
-                        if (userBuff > 0) {
-                            finalReward = buffSystem.applyBuff(finalReward, userBuff);
+                    // تطبيق البافات
+                    let userBuff = 0;
+                    let finalReward = { ...baseReward };
+
+                    if (buffSystem) {
+                        try {
+                            userBuff = await buffSystem.getBuff(userId, guild);
+                            if (userBuff > 0) {
+                                finalReward = buffSystem.applyBuff(finalReward, userBuff);
+                            }
+                        } catch (buffError) {
+                            console.error('❌ Buff system error:', buffError.message);
                         }
-                    } catch (buffError) {
-                        console.error('❌ Buff system error:', buffError.message);
-                    }
-                }
-
-                // استخدام LevelSystem
-                const levelResult = await levelSystem.processUserRewards(
-                    userId,
-                    userData.username,
-                    finalReward.xp,
-                    finalReward.coins,
-                    finalReward.crystals,
-                    clientReference,
-                    guild,
-                    'voice',
-                    false
-                );
-
-                if (levelResult.success) {
-                    // تحديث بيانات المستخدم
-                    userData.nextRewardTime = now + CONFIG.REWARD_INTERVAL;
-                    userData.rewardsGiven++;
-                    userData.totalXP += finalReward.xp;
-                    userData.totalCoins += finalReward.coins;
-                    userData.totalCrystals += finalReward.crystals;
-                    voiceUsers.set(userId, userData);
-
-                    // تحديث المهام
-                    await dbManager.updateGoalProgress(userId, 'voice_minutes', 30);
-
-                    // تسجيل النتيجة مع إيموجي مناسب
-                    let statusEmoji = '🎤';
-                    if (userData.isStreaming) {
-                        statusEmoji = '📡';
-                        streamRewards++;
-                        if (userData.isVIP) vipStreamRewards++;
-                    } else if (userData.isVIP) {
-                        statusEmoji = '🎖️';
                     }
 
-                    const buffText = userBuff > 0 ? `(+${userBuff}%)` : '';
-                    console.log(`${statusEmoji}${userData.username}: +${finalReward.xp} XP ${buffText}, +${finalReward.coins} coins`);
+                    // استخدام LevelSystem
+                    const levelResult = await levelSystem.processUserRewards(
+                        userId,
+                        userData.username,
+                        finalReward.xp,
+                        finalReward.coins,
+                        finalReward.crystals,
+                        clientReference,
+                        guild,
+                        'voice',
+                        false
+                    );
 
-                    rewardsGiven++;
-                } else if (levelResult.reason === 'Daily limit reached') {
-                    // عندما يصل للحد اليومي، نضيفه للقائمة فقط
-                    userData.dailyLimitReached = true;
-                    dailyLimitUsers.add(userId);
-                    voiceUsers.set(userId, userData);
+                    if (levelResult.success) {
+                        // تحديث بيانات المستخدم
+                        userData.nextRewardTime = now + CONFIG.REWARD_INTERVAL;
+                        userData.rewardsGiven++;
+                        userData.totalXP += finalReward.xp;
+                        userData.totalCoins += finalReward.coins;
+                        userData.totalCrystals += finalReward.crystals;
+                        voiceUsers.set(userId, userData);
 
-                    // رسالة واحدة فقط
-                    console.log(`⚠️ ${userData.username} reached daily limit (will not receive more rewards until reset)`);
+                        // تحديث المهام
+                        await dbManager.updateGoalProgress(userId, 'voice_minutes', 30);
 
-                    dailyLimitReachedCount++;
+                        // تسجيل النتيجة مع إيموجي مناسب
+                        let statusEmoji = '🎤';
+                        if (userData.isStreaming) {
+                            statusEmoji = '📡';
+                            streamRewards++;
+                            if (userData.isVIP) vipStreamRewards++;
+                        } else if (userData.isVIP) {
+                            statusEmoji = '🎖️';
+                        }
+
+                        const buffText = userBuff > 0 ? `(+${userBuff}%)` : '';
+                        console.log(`${statusEmoji}${userData.username}: +${finalReward.xp} XP ${buffText}, +${finalReward.coins} coins`);
+
+                        rewardsGiven++;
+                    } else if (levelResult.reason === 'Daily limit reached') {
+                        // عندما يصل للحد اليومي، نضيفه للقائمة فقط
+                        userData.dailyLimitReached = true;
+                        dailyLimitUsers.add(userId);
+                        voiceUsers.set(userId, userData);
+
+                        // رسالة واحدة فقط
+                        console.log(`⚠️ ${userData.username} reached daily limit (will not receive more rewards until reset)`);
+
+                        dailyLimitReachedCount++;
+                    }
+
+                } catch (error) {
+                    console.error(`❌ Error giving voice rewards to ${userData.username}:`, error.message);
                 }
-
-            } catch (error) {
-                console.error(`❌ Error giving voice rewards to ${userData.username}:`, error.message);
             }
         }
     }
@@ -437,6 +494,10 @@ async function distributeVoiceRewards() {
             summary += `)`;
         }
         console.log(summary);
+    }
+
+    if (channelsSkipped > 0) {
+        console.log(`⏸️  Skipped ${channelsSkipped} channel(s) - less than ${CONFIG.MIN_USERS_FOR_REWARDS} real users`);
     }
 
     if (dailyLimitReachedCount > 0) {
@@ -543,6 +604,8 @@ function setupOptimizedIntervals(client) {
 
 function setupVoiceSystem(client) {
     console.log('🚀 Starting Enhanced Voice XP System with STREAM support...');
+    console.log('='.repeat(40));
+    console.log(`📊 Minimum users required for rewards: ${CONFIG.MIN_USERS_FOR_REWARDS}`);
     console.log('='.repeat(40));
 
     clientReference = client;
@@ -664,7 +727,8 @@ function getVoiceSystemStats() {
             muted: CONFIG.REWARDS.MUTED,
             stream: CONFIG.REWARDS.STREAM,
             vipBonuses: CONFIG.REWARDS.VIP_BONUSES
-        }
+        },
+        minUsersRequired: CONFIG.MIN_USERS_FOR_REWARDS
     };
 }
 
@@ -673,6 +737,7 @@ function getUserVoiceStats(userId) {
     if (!userData) return null;
 
     const minutesInVoice = Math.floor((Date.now() - userData.joinTime) / 60000);
+    const realUsersInChannel = getRealUsersInChannel(userData.channelId, userData.guildId);
 
     let rewardRange;
     switch(userData.userType) {
@@ -702,7 +767,10 @@ function getUserVoiceStats(userId) {
         totalCoins: userData.totalCoins,
         totalCrystals: userData.totalCrystals,
         nextRewardIn: Math.max(0, userData.nextRewardTime - Date.now()),
-        rewardRange: rewardRange
+        rewardRange: rewardRange,
+        usersInChannel: realUsersInChannel,
+        minUsersRequired: CONFIG.MIN_USERS_FOR_REWARDS,
+        eligibleForRewards: realUsersInChannel >= CONFIG.MIN_USERS_FOR_REWARDS
     };
 }
 

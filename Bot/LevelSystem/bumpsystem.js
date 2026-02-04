@@ -178,7 +178,7 @@ async function sendRewardMessage(bumpData, xp, coins, hasCrystal, userData, guil
         const thankYouText = `### Thanks <@${bumpData.userId}> for bumping!`;
 
         // المكون 1: المكافآت (جميعها في مكون واحد)
-        let rewardsText = `**🎁 Bump Rewards Received:**`;
+        let rewardsText = `-# 🎁 Bump Rewards Received:`;
         rewardsText += `\n${xp} <:XP:1468446751282302976>`;
         rewardsText += ` ||&|| ${coins} <:Coins:1468446651965374534> Coins`;
         if (hasCrystal) {
@@ -190,7 +190,7 @@ async function sendRewardMessage(bumpData, xp, coins, hasCrystal, userData, guil
         if (levelUp) {
             specialText = `### 🎊 **Level Up!**\nNow Level ${newLevel}`;
         } else if (userBuff > 0) {
-            specialText = `-# 🎯 **Role Bonus: **+${userBuff}% from special roles`;
+            specialText = `-# **Role Bonus: **+${userBuff}%`;
         }
 
         // إنشاء الحاوية

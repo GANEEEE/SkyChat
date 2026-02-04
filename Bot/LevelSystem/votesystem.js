@@ -267,7 +267,7 @@ async function sendRewardMessage(voteData, xp, coins, hasCrystal, userData, guil
 
         const thankYouText = `### Thanks <@${voteData.userId}> for voting!`;
 
-        let rewardsText = `**🎁 Rewards Received:**`;
+        let rewardsText = `-# 🎁 Rewards Received:`;
         rewardsText += `\n${xp} <:XP:1468446751282302976>`;
         rewardsText += ` ||&|| ${coins} <:Coins:1468446651965374534> Coins`;
         if (hasCrystal) {
@@ -278,7 +278,7 @@ async function sendRewardMessage(voteData, xp, coins, hasCrystal, userData, guil
         if (levelUp) {
             thirdText = `### 🎊 **Level Up!**\nNow Level ${newLevel}`;
         } else if (userBuff > 0) {
-            thirdText = `-# 🎯 **Role Bonus: **+${userBuff}% XP from special roles`;
+            thirdText = `-# **Role Bonus: **+${userBuff}% XP`;
         }
 
         const container = new ContainerBuilder()

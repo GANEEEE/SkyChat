@@ -1434,10 +1434,10 @@ createHiddenMessageV2(challenge, channel) {
                     `## ${challenge.info.emoji} ${challenge.levelTag} CHALLENGE\n\n\n` +
                     `💡 **Trivia Question:**\n` +
                     `\`\`\`${challenge.data.question}\`\`\`\n` +
-                    `𝓐) ${shuffledOptions[0]}\n` +
-                    `𝓑) ${shuffledOptions[1]}\n` +
-                    `𝓒) ${shuffledOptions[2]}\n` +
-                    `𝓓) ${shuffledOptions[3]}\n\n` +
+                    `${shuffledOptions[0]}\n` +
+                    `${shuffledOptions[1]}\n` +
+                    `${shuffledOptions[2]}\n` +
+                    `${shuffledOptions[3]}\n\n` +
                     `⏱️ Duration: ${challenge.info.duration}s\n\n` +
                     `-# ✏️ **Type the correct answer text in chat!**`
 

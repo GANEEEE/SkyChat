@@ -37,7 +37,9 @@ module.exports = {
                             type: userData.userType || 'active',
                             rewardsGiven: userData.rewardsGiven || 0,
                             isVIP: userData.isVIP || false,
-                            isStreaming: userData.isStreaming || false
+                            isStreaming: userData.isStreaming || false,
+                            channelId: userData.channelId,
+                            guildId: userData.guildId
                         });
                     }
                 }
@@ -56,16 +58,42 @@ module.exports = {
             rewardsGiven: 0,
             totalXP: 0,
             totalCoins: 0,
-            totalCrystals: 0
+            totalCrystals: 0,
+            minUsersRequired: 3
         };
+
+        // ========== جلب معلومات القنوات وعدد المستخدمين ==========
+        const channelStats = new Map();
+        if (activeUsers.length > 0) {
+            for (const user of activeUsers) {
+                if (!channelStats.has(user.channelId)) {
+                    channelStats.set(user.channelId, {
+                        count: 0,
+                        users: [],
+                        eligible: false
+                    });
+                }
+                const channel = channelStats.get(user.channelId);
+                channel.count++;
+                channel.users.push(user.username);
+            }
+
+            // تحديث حالة الأهلية لكل قناة
+            for (const [channelId, data] of channelStats.entries()) {
+                data.eligible = data.count >= (stats.minUsersRequired || 3);
+            }
+        }
 
         // إنشاء الإمبدد
         const embed = new EmbedBuilder()
             .setTitle('Voice System Status')
             .setColor(activeUsers.length > 0 ? 0x00FF00 : 0xFF0000)
-            .setFooter({ text: `🎖️ VIP Users: ${stats.vipUsers || 0}` })
+            .setFooter({ text: `🎖️ VIP Users: ${stats.vipUsers || 0}` });
 
-        // إضافة كل إحصائية كحقل منفصل
+        // ========== إضافة معلومات الشرط الجديد ==========
+        const minUsers = stats.minUsersRequired || 3;
+        const eligibleChannels = Array.from(channelStats.values()).filter(ch => ch.eligible).length;
+
         embed.addFields(
             {
                 name: '🎙️ Talker',
@@ -96,15 +124,10 @@ module.exports = {
                 name: '💰 Total Coins',
                 value: `**${stats.totalCoins || 0}**`,
                 inline: true
-            },
-            {
-                name: '​', // حقل فارغ للفاصل
-                value: '​', // حقل فارغ
-                inline: true
             }
         );
 
-        // إضافة قائمة المستخدمين النشطين
+        // إضافة قائمة المستخدمين النشطين مع معلومات القنوات
         if (activeUsers.length > 0) {
             // ترتيب المستخدمين حسب عدد الجوائز (الأكثر أولا)
             const sortedUsers = [...activeUsers].sort((a, b) => b.rewardsGiven - a.rewardsGiven);
@@ -120,8 +143,13 @@ module.exports = {
                 }
 
                 const vipIcon = u.isVIP ? '🎖️ ' : '';
+
+                // التحقق إذا كان المستخدم في قناة مؤهلة
+                const channelInfo = channelStats.get(u.channelId);
+                const eligibilityIcon = channelInfo?.eligible ? '✅' : '❌';
+
                 const num = (index + 1).toString().padStart(2, '0');
-                userList += `\`${num}\` ${vipIcon}${emoji} **${u.username}** | ⭐ ${u.rewardsGiven}\n`;
+                userList += `\`${num}\` ${eligibilityIcon} ${vipIcon}${emoji} **${u.username}** | ⭐ ${u.rewardsGiven}\n`;
             });
 
             embed.addFields({
@@ -129,6 +157,27 @@ module.exports = {
                 value: userList || '*No active users*',
                 inline: false
             });
+
+            // إضافة معلومات عن القنوات
+            if (channelStats.size > 0) {
+                let channelInfo = '';
+                let channelNum = 1;
+
+                for (const [channelId, data] of channelStats.entries()) {
+                    const status = data.eligible ? '✅ Eligible' : '❌ Not Eligible';
+                    const usersText = data.users.slice(0, 3).join(', ') + (data.users.length > 3 ? '...' : '');
+                    channelInfo += `**${channelNum}.** ${status} - **${data.count}** users\n`;
+                    channelNum++;
+                }
+
+                if (channelInfo) {
+                    embed.addFields({
+                        name: `Voice Channels (${channelStats.size})`,
+                        value: channelInfo,
+                        inline: false
+                    });
+                }
+            }
 
             if (activeUsers.length > 10) {
                 embed.addFields({
@@ -188,7 +237,9 @@ module.exports = {
                                 type: userData.userType || 'active',
                                 rewardsGiven: userData.rewardsGiven || 0,
                                 isVIP: userData.isVIP || false,
-                                isStreaming: userData.isStreaming || false
+                                isStreaming: userData.isStreaming || false,
+                                channelId: userData.channelId,
+                                guildId: userData.guildId
                             });
                         }
                     }
@@ -200,17 +251,42 @@ module.exports = {
             // جلب إحصائيات النظام المحدثة
             const refreshedStats = voiceSystem.getVoiceSystemStats ? voiceSystem.getVoiceSystemStats() : stats;
 
+            // ========== تحديث معلومات القنوات ==========
+            const refreshedChannelStats = new Map();
+            if (refreshedActiveUsers.length > 0) {
+                for (const user of refreshedActiveUsers) {
+                    if (!refreshedChannelStats.has(user.channelId)) {
+                        refreshedChannelStats.set(user.channelId, {
+                            count: 0,
+                            users: [],
+                            eligible: false
+                        });
+                    }
+                    const channel = refreshedChannelStats.get(user.channelId);
+                    channel.count++;
+                    channel.users.push(user.username);
+                }
+
+                // تحديث حالة الأهلية لكل قناة
+                for (const [channelId, data] of refreshedChannelStats.entries()) {
+                    data.eligible = data.count >= (refreshedStats.minUsersRequired || 3);
+                }
+            }
+
             // تحديث الإمبدد
             const updatedEmbed = new EmbedBuilder()
                 .setTitle('Voice System Status (Refreshed)')
                 .setColor(refreshedActiveUsers.length > 0 ? 0x00FF00 : 0xFF0000)
-                .setFooter({ text: `🎖️ VIP Users: ${stats.vipUsers || 0}` })
+                .setFooter({ text: `🎖️ VIP Users: ${refreshedStats.vipUsers || 0}` });
 
-            // تحديث الحقول الفردية
+            // ========== تحديث معلومات الشرط الجديد ==========
+            const refreshedMinUsers = refreshedStats.minUsersRequired || 3;
+            const refreshedEligibleChannels = Array.from(refreshedChannelStats.values()).filter(ch => ch.eligible).length;
+
             updatedEmbed.addFields(
                 {
-                    name: '👥 Users in Voice',
-                    value: `**${refreshedActiveUsers.length}**`,
+                    name: '📊 System Requirements',
+                    value: `**Minimum Users:** ${refreshedMinUsers}+ per channel\n**Eligible Channels:** ${refreshedEligibleChannels}/${refreshedChannelStats.size}`,
                     inline: false
                 },
                 {
@@ -242,11 +318,6 @@ module.exports = {
                     name: '💰 Total Coins',
                     value: `**${refreshedStats.totalCoins || 0}**`,
                     inline: true
-                },
-                {
-                    name: '​', // حقل فارغ للفاصل
-                    value: '​', // حقل فارغ
-                    inline: false
                 }
             );
 
@@ -264,8 +335,13 @@ module.exports = {
                     }
 
                     const vipIcon = u.isVIP ? '🎖️ ' : '';
+
+                    // التحقق إذا كان المستخدم في قناة مؤهلة
+                    const channelInfo = refreshedChannelStats.get(u.channelId);
+                    const eligibilityIcon = channelInfo?.eligible ? '✅' : '❌';
+
                     const num = (index + 1).toString().padStart(2, '0');
-                    userList += `\`${num}\` ${vipIcon}${emoji} **${u.username}** | ⭐ ${u.rewardsGiven}\n`;
+                    userList += `\`${num}\` ${eligibilityIcon} ${vipIcon}${emoji} **${u.username}** | ⭐ ${u.rewardsGiven}\n`;
                 });
 
                 updatedEmbed.addFields({
@@ -273,6 +349,26 @@ module.exports = {
                     value: userList || '*No active users*',
                     inline: false
                 });
+
+                // إضافة معلومات عن القنوات المحدثة
+                if (refreshedChannelStats.size > 0) {
+                    let channelInfo = '';
+                    let channelNum = 1;
+
+                    for (const [channelId, data] of refreshedChannelStats.entries()) {
+                        const status = data.eligible ? '✅ Eligible' : '❌ Not Eligible';
+                        channelInfo += `**${channelNum}.** ${status} - **${data.count}** users\n`;
+                        channelNum++;
+                    }
+
+                    if (channelInfo) {
+                        updatedEmbed.addFields({
+                            name: `Voice Channels (${refreshedChannelStats.size})`,
+                            value: channelInfo,
+                            inline: false
+                        });
+                    }
+                }
 
                 if (refreshedActiveUsers.length > 10) {
                     updatedEmbed.addFields({

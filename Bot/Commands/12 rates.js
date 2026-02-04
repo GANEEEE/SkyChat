@@ -66,11 +66,11 @@ const CHAT_SYSTEM = {
 // 2. Voice System
 const VOICE_SYSTEM = {
     name: "🎤 Voice Rewards",
-    streamerRewards: "2 - 4 XP • 2 - 4 Coins • 0.05% Crystal chance",
-    activeRewards: "1 - 3 XP • 1 - 3 Coins • 0.01% Crystal chance",
-    mutedRewards: "1 - 2 XP • 1 - 2 Coins",
+    streamerRewards: "1 - 3 XP • 1 - 3 Coins • 3% Crystal chance",
+    activeRewards: "1 - 2 XP • 1 - 2 Coins • 1% Crystal chance",
+    mutedRewards: "1 - 1 XP • 1 - 1 Coins",
     interval: "Every 30 minutes",
-    vipBonus: "+1% XP, +50% Coins in VIP channels",
+    vipBonus: "+10% XP, +25% Coins in VIP channels",
     dailyLimit: "500 XP, 750 Coins"
 };
 
@@ -292,7 +292,7 @@ const MISSION_SYSTEM = {
         { 
             title: "Smart Contributor", 
             description: "Get 1 - 2 staff reactions",
-            rewards: "60 - 100 XP • 40 - 90 Coins • +60 XP bonus (20%)" 
+            rewards: "60 - 100 XP • 40 - 90 Coins • +60 XP bonus" 
         },
         { 
             title: "Lucky Day", 
@@ -310,32 +310,32 @@ const MISSION_SYSTEM = {
         { 
             title: "Weekly Bumper", 
             description: "Bump the server 8 - 12 times this week",
-            rewards: "450 - 600 XP • 300 - 500 Coins • 1 - 2 Crystals" 
+            rewards: "450 - 600 XP • 300 - 500 Coins • 0 - 1 Crystals" 
         },
         { 
             title: "Weekly Active", 
             description: "Send 400 - 600 messages this week",
-            rewards: "550 - 800 XP • 500 - 700 Coins • 1 - 3 Crystals" 
+            rewards: "550 - 800 XP • 500 - 700 Coins • 0 - 1 Crystals" 
         },
         { 
             title: "Voice Resident", 
             description: "Spend 24 - 48 hours in voice this week",
-            rewards: "650 - 750 XP • 550 - 650 Coins • 1 - 2 Crystals" 
+            rewards: "650 - 750 XP • 550 - 650 Coins • 0 - 1 Crystals" 
         },
         { 
             title: "Drop Master", 
             description: "Claim 7 - 10 drops this week",
-            rewards: "350 - 450 XP • 300 - 500 Coins" 
+            rewards: "350 - 450 XP • 300 - 500 Coins • 0 - 1 Crystals" 
         },
         { 
             title: "True Contributor", 
             description: "Get 12 - 18 staff reactions this week",
-            rewards: "400 - 600 XP • 450 - 650 Coins • 1 - 2 Crystals" 
+            rewards: "400 - 600 XP • 450 - 650 Coins • 0 - 1 Crystals" 
         },
         { 
             title: "Reward Collector", 
             description: "Collect 2500 - 3500 coins this week",
-            rewards: "300 - 500 XP • 300 - 400 Coins • 2 - 3 Crystals" 
+            rewards: "300 - 500 XP • 300 - 400 Coins • 0 - 1 Crystals" 
         }
     ]
 };

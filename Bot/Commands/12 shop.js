@@ -15,6 +15,7 @@ const skyBreakGuard = require('../System/SkyBreak');
 const skyPassGuard = require('../System/SkyPass');
 const messageGuard = require('../System/SkyOG');
 const colorsMessageGuard = require('../System/SkyColors');
+const skyVoiceGuard = require('../System/SkyVoicerX');
 
 const SHOP_LOG_CHANNEL_ID = '1434904222805004411';
 
@@ -1005,6 +1006,35 @@ module.exports = {
                 console.log(`✅ Colors message requirement satisfied for ${interaction.user.tag}`);
             }
             // ============ **END COLORS CHECK** ============
+
+            // ============ 🔊 **VOICE POINTS REQUIREMENT CHECK** ============
+            console.log(`🔊 Checking Voice Points requirements for ${interaction.user.tag}`);
+
+            const voicePointsCheck = await skyVoiceGuard.validatePurchase(
+                interaction.user,
+                interaction.guild,
+                item.role_id
+            );
+
+            console.log(`📊 Voice Points check result:`, {
+                allowed: voicePointsCheck.allowed,
+                isTargetRole: voicePointsCheck.isTargetRole,
+                hasEnoughVoicePoints: voicePointsCheck.hasEnoughVoicePoints
+            });
+
+            if (!voicePointsCheck.allowed && voicePointsCheck.isTargetRole) {
+                console.log(`🚫 PURCHASE BLOCKED for ${interaction.user.tag}: Not enough voice points`);
+
+                return await interaction.followUp({
+                    embeds: [voicePointsCheck.embed],
+                    ephemeral: false
+                });
+            }
+
+            if (voicePointsCheck.allowed && voicePointsCheck.isTargetRole) {
+                console.log(`✅ Voice Points requirement satisfied for ${interaction.user.tag}`);
+            }
+            // ============ **END VOICE POINTS CHECK** ============
 
             let couponDiscount = 0;
             let couponId = null;

@@ -631,11 +631,11 @@ module.exports = {
             let priceTextForButton = '';
 
             if (finalPriceCoins > 0 && finalPriceCrystals > 0) {
-                priceTextForButton = `<:Coins:1468446651965374534>${shopSessionManager.formatNumber(finalPriceCoins)} + <:Crystal:1468446688338251793>${shopSessionManager.formatNumber(finalPriceCrystals)}`;
+                priceTextForButton = `${shopSessionManager.formatNumber(finalPriceCoins)} Coins & ${shopSessionManager.formatNumber(finalPriceCrystals)} Crystal`;
             } else if (finalPriceCoins > 0) {
-                priceTextForButton = `<:Coins:1468446651965374534>${shopSessionManager.formatNumber(finalPriceCoins)}`;
+                priceTextForButton = `${shopSessionManager.formatNumber(finalPriceCoins)} Coins`;
             } else if (finalPriceCrystals > 0) {
-                priceTextForButton = `<:Crystal:1468446688338251793>${shopSessionManager.formatNumber(finalPriceCrystals)}`;
+                priceTextForButton = `${shopSessionManager.formatNumber(finalPriceCrystals)} Crystals`;
             } else {
                 priceTextForButton = 'FREE';
             }
@@ -667,40 +667,76 @@ module.exports = {
 
             if (hasCoupon && couponDiscount > 0) {
                 if (item.is_on_sale && item.current_discount > 0) {
-                    const salePriceCoins = item.discounted_price_coins || Math.floor(originalPriceCoins * (1 - item.current_discount/100));
-                    const salePriceCrystals = item.discounted_price_crystals || Math.floor(originalPriceCrystals * (1 - item.current_discount/100));
+                    // حالة: كوبون + تخفيض في المحل
+                    const totalDiscount = couponDiscount + item.current_discount;
 
-                    displayedPriceText += `**Price:** ~~${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>~~ → **${shopSessionManager.formatNumber(finalPriceCoins)} <:Coins:1468446651965374534>**`;
-                    if (originalPriceCrystals > 0) {
-                        displayedPriceText += ` ~~+ ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>~~ → **+ ${shopSessionManager.formatNumber(finalPriceCrystals)} <:Crystal:1468446688338251793>**`;
+                    let originalParts = [];
+                    let finalParts = [];
+
+                    // الكوينز
+                    if (originalPriceCoins > 0) {
+                        originalParts.push(`${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>`);
+                        finalParts.push(`${shopSessionManager.formatNumber(finalPriceCoins)} <:Coins:1468446651965374534>`);
                     }
-                    displayedPriceText += ` 🎟️ **(-${couponDiscount + item.current_discount}%)**`;
+
+                    // الكريستال
+                    if (originalPriceCrystals > 0) {
+                        originalParts.push(`${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>`);
+                        finalParts.push(`${shopSessionManager.formatNumber(finalPriceCrystals)} <:Crystal:1468446688338251793>`);
+                    }
+
+                    displayedPriceText = `**Price:** ~~${originalParts.join(' + ')}~~ → **${finalParts.join(' + ')}** 🎟️ **(-${totalDiscount}%)**`;
                 } else {
-                    displayedPriceText += `**Price:** ~~${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>~~ **${shopSessionManager.formatNumber(finalPriceCoins)} <:Coins:1468446651965374534>**`;
-                    if (originalPriceCrystals > 0) {
-                        displayedPriceText += ` ~~+ ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>~~ **+ ${shopSessionManager.formatNumber(finalPriceCrystals)} <:Crystal:1468446688338251793>**`;
+                    // حالة: كوبون فقط
+                    let originalParts = [];
+                    let finalParts = [];
+
+                    if (originalPriceCoins > 0) {
+                        originalParts.push(`${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>`);
+                        finalParts.push(`${shopSessionManager.formatNumber(finalPriceCoins)} <:Coins:1468446651965374534>`);
                     }
-                    displayedPriceText += ` 🎟️ **(-${couponDiscount}%)**`;
+
+                    if (originalPriceCrystals > 0) {
+                        originalParts.push(`${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>`);
+                        finalParts.push(`${shopSessionManager.formatNumber(finalPriceCrystals)} <:Crystal:1468446688338251793>`);
+                    }
+
+                    displayedPriceText = `**Price:** ~~${originalParts.join(' + ')}~~ → **${finalParts.join(' + ')}** 🎟️ **(-${couponDiscount}%)**`;
                 }
             } else if (item.is_on_sale && item.current_discount > 0) {
+                // حالة: تخفيض في المحل فقط
                 const salePriceCoins = item.discounted_price_coins || Math.floor(originalPriceCoins * (1 - item.current_discount/100));
                 const salePriceCrystals = item.discounted_price_crystals || Math.floor(originalPriceCrystals * (1 - item.current_discount/100));
 
-                displayedPriceText += `**Price:** ~~${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>~~ **${shopSessionManager.formatNumber(salePriceCoins)} <:Coins:1468446651965374534>**`;
+                let originalParts = [];
+                let finalParts = [];
+
+                if (originalPriceCoins > 0) {
+                    originalParts.push(`${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>`);
+                    finalParts.push(`${shopSessionManager.formatNumber(salePriceCoins)} <:Coins:1468446651965374534>`);
+                }
+
                 if (originalPriceCrystals > 0) {
-                    displayedPriceText += ` ~~+ ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>~~ **+ ${shopSessionManager.formatNumber(salePriceCrystals)} <:Crystal:1468446688338251793>**`;
+                    originalParts.push(`${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>`);
+                    finalParts.push(`${shopSessionManager.formatNumber(salePriceCrystals)} <:Crystal:1468446688338251793>`);
                 }
-                displayedPriceText += ` **(-${item.current_discount}%)**`;
+
+                displayedPriceText = `**Price:** ~~${originalParts.join(' + ')}~~ → **${finalParts.join(' + ')}** **(-${item.current_discount}%)**`;
             } else {
+                // حالة: بدون تخفيض
+                let priceParts = [];
+
                 if (originalPriceCoins > 0 && originalPriceCrystals > 0) {
-                    displayedPriceText += `**Price:** ${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534> & ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>`;
+                    priceParts.push(`${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534> & ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>`);
                 } else if (originalPriceCoins > 0) {
-                    displayedPriceText += `**Price:** ${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>`;
+                    priceParts.push(`${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>`);
                 } else if (originalPriceCrystals > 0) {
-                    displayedPriceText += `**Price:** ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>`;
+                    priceParts.push(`${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>`);
                 } else {
-                    displayedPriceText += `**Price:** FREE 🎁`;
+                    priceParts.push('FREE 🎁');
                 }
+
+                displayedPriceText = `**Price:** ${priceParts.join('')}`;
             }
 
             roleAndDescription += displayedPriceText + '\n';

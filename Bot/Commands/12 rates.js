@@ -69,7 +69,7 @@ const VOICE_SYSTEM = {
     streamerRewards: "1 - 3 XP • 1 - 3 Coins • 3% Crystal chance",
     activeRewards: "1 - 2 XP • 1 - 2 Coins • 1% Crystal chance",
     mutedRewards: "1 - 1 XP • 1 - 1 Coins",
-    interval: "Every 30 minutes",
+    interval: "Every 30 minutes | *Minimum Users: +3 per channel*",
     vipBonus: "+10% XP, +25% Coins in VIP channels",
     dailyLimit: "500 XP, 750 Coins"
 };

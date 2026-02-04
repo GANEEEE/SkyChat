@@ -96,6 +96,16 @@ module.exports = {
 
         embed.addFields(
             {
+                name: 'System Requirements',
+                value: `**Minimum Users:** +${minUsers} per channel`,
+                inline: false
+            },
+            {
+                name: ' ',
+                value: ` `,
+                inline: false
+            },
+            {
                 name: '🎙️ Talker',
                 value: `**${stats.activeUsers || 0}**`,
                 inline: true

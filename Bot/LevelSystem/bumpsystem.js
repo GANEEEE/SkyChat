@@ -82,7 +82,6 @@ async function giveBumpRewards(bumpData, client, guild) {
             finalCrystals > 0, 
             userData, 
             guild,
-            client,
             userBuff,
             levelUp,
             newLevel

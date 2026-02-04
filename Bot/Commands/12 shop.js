@@ -13,6 +13,8 @@ const dbManager = require('../Data/database');
 const { couponSystem } = require('../LevelSystem/couponsystem');
 const skyBreakGuard = require('../System/SkyBreak');
 const skyPassGuard = require('../System/SkyPass');
+const messageGuard = require('../System/SkyOG');
+const colorsMessageGuard = require('../System/SkyColors');
 
 const SHOP_LOG_CHANNEL_ID = '1434904222805004411';
 
@@ -909,6 +911,64 @@ module.exports = {
                 console.log(`ℹ️ ChampionRest will be removed after refund period`);
             }
             // ============ **END SECURITY CHECK** ============
+
+            // ============ 🔒 **MESSAGE REQUIREMENT CHECK** ============
+            console.log(`🔍 Checking message requirements for ${interaction.user.tag}`);
+
+            const requirementCheck = await messageGuard.validatePurchase(
+                interaction.user,
+                interaction.guild,
+                item.role_id
+            );
+
+            console.log(`📊 Message check result:`, {
+                allowed: requirementCheck.allowed,
+                isTargetRole: requirementCheck.isTargetRole,
+                hasEnoughMessages: requirementCheck.hasEnoughMessages
+            });
+
+            if (!requirementCheck.allowed && requirementCheck.isTargetRole) {
+                console.log(`🚫 PURCHASE BLOCKED for ${interaction.user.tag}: Not enough messages`);
+
+                return await interaction.followUp({
+                    embeds: [requirementCheck.embed],
+                    ephemeral: false
+                });
+            }
+
+            if (requirementCheck.allowed && requirementCheck.isTargetRole) {
+                console.log(`✅ Message requirement satisfied for ${interaction.user.tag}`);
+            }
+            // ============ **END MESSAGE CHECK** ============
+
+            // ============ 🎨 **COLORS MESSAGE REQUIREMENT CHECK** ============
+            console.log(`🎨 Checking Colors message requirements for ${interaction.user.tag}`);
+
+            const colorsCheck = await colorsMessageGuard.validatePurchase(
+                interaction.user,
+                interaction.guild,
+                item.role_id
+            );
+
+            console.log(`🎨 Colors check result:`, {
+                allowed: colorsCheck.allowed,
+                isColorsRole: colorsCheck.isColorsRole,
+                hasEnoughMessages: colorsCheck.hasEnoughMessages
+            });
+
+            if (!colorsCheck.allowed && colorsCheck.isColorsRole) {
+                console.log(`🚫 COLORS PURCHASE BLOCKED for ${interaction.user.tag}: Not enough messages for Colors`);
+
+                return await interaction.followUp({
+                    embeds: [colorsCheck.embed],
+                    ephemeral: false
+                });
+            }
+
+            if (colorsCheck.allowed && colorsCheck.isColorsRole) {
+                console.log(`✅ Colors message requirement satisfied for ${interaction.user.tag}`);
+            }
+            // ============ **END COLORS CHECK** ============
 
             let couponDiscount = 0;
             let couponId = null;

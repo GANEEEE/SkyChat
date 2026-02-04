@@ -5,7 +5,7 @@ const levelSystem = require('../LevelSystem/levelsystem');
 
 const BUMP_BOT_SETTINGS = {
     BUMP_BOT_ID: '813077581749288990',
-    ALLOWED_CHANNEL_IDS: ['1465799718821953830'],
+    ALLOWED_CHANNEL_IDS: ['1385514822132830299'],
     KEYWORDS: ['bump', 'bumped', 'bumping', 'done', 'server bumped']
 };
 

@@ -349,6 +349,13 @@ module.exports = {
             const role = interaction.guild.roles.cache.get(item.role_id);
             const roleMention = role ? `<@&${item.role_id}>` : `Role ${item.role_id}`;
 
+            // بناء النص الرئيسي للمنتج
+            let itemContent = `### **${emoji}${emoji ? ' ' : ''}${roleMention}**\n`;
+
+            if (item.description) {
+                itemContent += `${item.description}\n`;
+            }
+
             // السعر
             let priceText = '';
             if (item.is_on_sale && item.current_discount > 0) {
@@ -356,20 +363,20 @@ module.exports = {
                 const discountedCrystals = item.discounted_price_crystals || Math.floor(item.original_price_crystals * (1 - item.current_discount/100));
 
                 let originalText = '';
-                if (item.original_price_coins > 0) originalText += `Price: **${shopSessionManager.formatNumber(item.original_price_coins)} 🪙**`;
+                if (item.original_price_coins > 0) originalText += `**${shopSessionManager.formatNumber(item.original_price_coins)} 🪙**`;
                 if (item.original_price_crystals > 0) {
                     if (originalText) originalText += ' & ';
                     originalText += `**${shopSessionManager.formatNumber(item.original_price_crystals)} 💎**`;
                 }
 
                 let discountedText = '';
-                if (discountedCoins > 0) discountedText += `Price: **${shopSessionManager.formatNumber(discountedCoins)} 🪙**`;
+                if (discountedCoins > 0) discountedText += `**${shopSessionManager.formatNumber(discountedCoins)} 🪙**`;
                 if (discountedCrystals > 0) {
                     if (discountedText) discountedText += ' & ';
                     discountedText += `**${shopSessionManager.formatNumber(discountedCrystals)} 💎**`;
                 }
 
-                priceText = `~~${originalText}~~ **${discountedText}** (-${item.current_discount}%)`;
+                priceText = `Price: ~~${originalText}~~ **${discountedText}** (-${item.current_discount}%)`;
             } else {
                 if (item.original_price_coins > 0 && item.original_price_crystals > 0) {
                     priceText = `Price: **${shopSessionManager.formatNumber(item.original_price_coins)} 🪙** & **${shopSessionManager.formatNumber(item.original_price_crystals)} 💎**`;
@@ -395,7 +402,7 @@ module.exports = {
             if (item.buff_type) {
                 const buffEmoji = this.getBuffEmoji(item.buff_type);
                 const buffName = this.getBuffName(item.buff_type);
-                buffInfo = `Buff: **${buffEmoji} ${buffName}** \`(${item.buff_duration_minutes || 0} minutes)\``;
+                buffInfo = `${buffEmoji} **${buffName}** (${item.buff_duration_minutes || 0} minutes)`;
             }
 
             // Discount chance
@@ -404,9 +411,20 @@ module.exports = {
                 discountInfo = `Discount Chance: **${item.discount_chance}%**`;
             }
 
+            // ⭐⭐⭐ الحل: دمج كل المعلومات في content واحد ⭐⭐⭐
+            let detailsContent = priceText + '\n' + stockText + '\n';
+
+            if (buffInfo) {
+                detailsContent += buffInfo + '\n';
+            }
+
+            if (discountInfo) {
+                detailsContent += discountInfo + '\n';
+            }
+
             const itemSection = new SectionBuilder()
                 .addTextDisplayComponents((textDisplay) =>
-                    textDisplay.setContent(`### **${emoji}${emoji ? ' ' : ''}${roleMention}**\n${item.description || ''}`)
+                    textDisplay.setContent(itemContent.trim())
                 )
                 .setButtonAccessory((button) =>
                     button
@@ -417,29 +435,17 @@ module.exports = {
                 );
 
             // Details section
-            const detailsSection = new SectionBuilder();
-
-            const textComponents = [];
-            textComponents.push((textDisplay) => textDisplay.setContent(priceText));
-            textComponents.push((textDisplay) => textDisplay.setContent(stockText));
-
-            if (buffInfo) {
-                textComponents.push((textDisplay) => textDisplay.setContent(buffInfo));
-            }
-
-            if (discountInfo) {
-                textComponents.push((textDisplay) => textDisplay.setContent(discountInfo));
-            }
-
-            detailsSection.addTextDisplayComponents(...textComponents);
-
-            detailsSection.setButtonAccessory((button) =>
-                button
-                    .setCustomId(`edit_item_${item.id}`)
-                    .setLabel('Edit')
-                    .setStyle(ButtonStyle.Secondary)
-                    .setEmoji({name: '✏️'})
-            );
+            const detailsSection = new SectionBuilder()
+                .addTextDisplayComponents((textDisplay) =>
+                    textDisplay.setContent(detailsContent.trim())
+                )
+                .setButtonAccessory((button) =>
+                    button
+                        .setCustomId(`edit_item_${item.id}`)
+                        .setLabel('Edit')
+                        .setStyle(ButtonStyle.Secondary)
+                        .setEmoji({name: '✏️'})
+                );
 
             container
                 .addSectionComponents((section) => itemSection)
@@ -448,15 +454,12 @@ module.exports = {
         }
 
         // =============== قسم التنقل المعدل ===============
-        // Navigation section (مع زر Add فقط كـ ButtonAccessory)
         const navigationSection = new SectionBuilder();
 
-        // نص رقم الصفحة فقط في القسم
         navigationSection.addTextDisplayComponents((textDisplay) =>
             textDisplay.setContent(`-# Page: ${pageNumber} of ${totalPages}`)
         );
 
-        // زر Add كـ ButtonAccessory في نفس القسم
         navigationSection.setButtonAccessory((button) =>
             button
                 .setCustomId('add_item')
@@ -471,7 +474,6 @@ module.exports = {
         if (pageNumber > 1 || pageNumber < totalPages) {
             const buttons = [];
 
-            // زر Previous (يظهر فقط إذا لم نكن في الصفحة الأولى)
             if (pageNumber > 1) {
                 buttons.push(
                     new ButtonBuilder()
@@ -481,7 +483,6 @@ module.exports = {
                 );
             }
 
-            // زر Next (يظهر فقط إذا لم نكن في الصفحة الأخيرة)
             if (pageNumber < totalPages) {
                 buttons.push(
                     new ButtonBuilder()
@@ -491,7 +492,6 @@ module.exports = {
                 );
             }
 
-            // إضافة الأزرار إلى ActionRow
             if (buttons.length > 0) {
                 container.addActionRowComponents((actionRow) => actionRow.setComponents(buttons));
             }

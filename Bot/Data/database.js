@@ -4346,7 +4346,7 @@ class DatabaseManager {
     // ========== DISCOUNT LOTTERY SYSTEM ==========
 
     /**
-     * تشغيل اليانصيب اليومي (كل 12 ساعة)
+     * تشغيل اليانصيب اليومي (مصححة12 ساعة)
      */
     async runDailyDiscountLottery() {
         try {
@@ -4408,8 +4408,16 @@ class DatabaseManager {
                 };
             }
 
-            // 5. توليد تخفيض
-            const discountPercentage = this.generateRandomDiscount();
+            // 5. توليد تخفيض مع التحقق
+            let discountPercentage = this.generateRandomDiscount();
+
+            // 🔍 التحقق من قيمة الخصم
+            console.log(`🔍 Generated discount: ${discountPercentage}% (type: ${typeof discountPercentage})`);
+
+            if (typeof discountPercentage !== 'number' || isNaN(discountPercentage)) {
+                console.warn(`⚠️ Invalid discount generated: ${discountPercentage}, using default 20%`);
+                discountPercentage = 20;
+            }
 
             // 6. تطبيق التخفيض
             const applied = await this.applyDiscountToItem(selectedItem.id, discountPercentage);
@@ -4446,6 +4454,7 @@ class DatabaseManager {
 
         } catch (error) {
             console.error('❌ Error in daily discount lottery:', error);
+            console.error('📊 Full error details:', error.stack);
             return { 
                 success: false, 
                 error: error.message,
@@ -4568,15 +4577,58 @@ class DatabaseManager {
     }
 
     /**
-     * تطبيق التخفيض على منتج
+     * تطبيق التخفيض على منتج (مصححة)
      */
     async applyDiscountToItem(itemId, discountPercentage) {
         try {
-            const item = await this.get('SELECT * FROM shop_items WHERE id = ?', [itemId]);
-            if (!item) return false;
+            console.log(`🔧 Applying discount to item ${itemId}: ${discountPercentage}%`);
 
-            const discountedCoins = Math.floor(item.original_price_coins * (1 - discountPercentage/100));
-            const discountedCrystals = Math.floor(item.original_price_crystals * (1 - discountPercentage/100));
+            // 🔍 التحقق من أن discountPercentage هو رقم
+            if (typeof discountPercentage !== 'number' || isNaN(discountPercentage)) {
+                console.error(`❌ Invalid discount percentage: ${discountPercentage}, type: ${typeof discountPercentage}`);
+                console.error('📊 Debug info:', { 
+                    itemId, 
+                    discountPercentage, 
+                    type: typeof discountPercentage 
+                });
+
+                // استخدم قيمة افتراضية آمنة
+                discountPercentage = parseInt(discountPercentage) || 15;
+                console.log(`🔄 Using fallback discount: ${discountPercentage}%`);
+            }
+
+            // 🔍 التحقق من أن القيمة ضمن المدى المسموح
+            if (discountPercentage < 5 || discountPercentage > 100) {
+                console.warn(`⚠️ Discount percentage out of range: ${discountPercentage}%, clamping to 15-40%`);
+                discountPercentage = Math.max(5, Math.min(40, discountPercentage));
+            }
+
+            const item = await this.get('SELECT * FROM shop_items WHERE id = ?', [itemId]);
+            if (!item) {
+                console.error(`❌ Item ${itemId} not found`);
+                return false;
+            }
+
+            // حساب الأسعار بعد الخصم
+            const discountedCoins = Math.floor(item.original_price_coins * (1 - discountPercentage / 100));
+            const discountedCrystals = Math.floor(item.original_price_crystals * (1 - discountPercentage / 100));
+
+            console.log(`📊 Discount calculation for item ${itemId}:`);
+            console.log(`   - Original coins: ${item.original_price_coins}`);
+            console.log(`   - Original crystals: ${item.original_price_crystals}`);
+            console.log(`   - Discount: ${discountPercentage}%`);
+            console.log(`   - Discounted coins: ${discountedCoins}`);
+            console.log(`   - Discounted crystals: ${discountedCrystals}`);
+
+            // 🔍 التحقق من القيم قبل التحديث
+            const params = [
+                discountPercentage, // رقم
+                discountedCoins,    // رقم
+                discountedCrystals, // رقم
+                itemId              // رقم
+            ];
+
+            console.log(`📝 SQL Parameters:`, params.map((p, i) => `$${i+1}=${p} (${typeof p})`).join(', '));
 
             await this.run(
                 `UPDATE shop_items 
@@ -4586,7 +4638,7 @@ class DatabaseManager {
                      is_on_sale = true,
                      updated_at = CURRENT_TIMESTAMP
                  WHERE id = ?`,
-                [discountPercentage, discountedCoins, discountedCrystals, itemId]
+                params
             );
 
             console.log(`✅ Applied ${discountPercentage}% discount to item ${itemId}`);
@@ -4598,6 +4650,12 @@ class DatabaseManager {
 
         } catch (error) {
             console.error('❌ Error applying discount:', error);
+            console.error('📊 Context:', {
+                itemId,
+                discountPercentage,
+                errorMessage: error.message,
+                errorStack: error.stack
+            });
             return false;
         }
     }
@@ -4613,13 +4671,32 @@ class DatabaseManager {
             );
 
             let newFailures = 1;
+            let lotteryData = {};
 
             if (lastLottery) {
-                const data = JSON.parse(lastLottery.setting_value || '{}');
-                newFailures = Math.min((data.consecutive_failures || 0) + 1, 4);
+                try {
+                    lotteryData = JSON.parse(lastLottery.setting_value || '{}');
+                    newFailures = Math.min((lotteryData.consecutive_failures || 0) + 1, 4);
+                } catch (parseError) {
+                    console.log('⚠️ Error parsing lottery data, using defaults');
+                    newFailures = 1;
+                    lotteryData = {
+                        total_lotteries: 0,
+                        successful_lotteries: 0
+                    };
+                }
             }
 
             await this.updateLotteryStats(false);
+
+            // البيانات الجديدة للـ update
+            const updatedData = {
+                last_run: new Date().toISOString(),
+                consecutive_failures: newFailures,
+                current_day: newFailures,
+                total_lotteries: (lotteryData.total_lotteries || 0) + 1,
+                successful_lotteries: lotteryData.successful_lotteries || 0
+            };
 
             await this.run(
                 `INSERT INTO bot_settings (setting_key, setting_value) 
@@ -4628,20 +4705,8 @@ class DatabaseManager {
                  DO UPDATE SET setting_value = ?,
                               updated_at = CURRENT_TIMESTAMP`,
                 [
-                    JSON.stringify({
-                        last_run: new Date().toISOString(),
-                        consecutive_failures: newFailures,
-                        current_day: newFailures,
-                        total_lotteries: (data?.total_lotteries || 0) + 1,
-                        successful_lotteries: data?.successful_lotteries || 0
-                    }),
-                    JSON.stringify({
-                        last_run: new Date().toISOString(),
-                        consecutive_failures: newFailures,
-                        current_day: newFailures,
-                        total_lotteries: (data?.total_lotteries || 0) + 1,
-                        successful_lotteries: data?.successful_lotteries || 0
-                    })
+                    JSON.stringify(updatedData),
+                    JSON.stringify(updatedData)
                 ]
             );
 
@@ -4664,23 +4729,34 @@ class DatabaseManager {
                  WHERE setting_key = 'daily_discount_lottery'`
             );
 
+            let lotteryData = {};
             if (lastLottery) {
-                const data = JSON.parse(lastLottery.setting_value || '{}');
-
-                await this.run(
-                    `UPDATE bot_settings 
-                     SET setting_value = ?,
-                         updated_at = CURRENT_TIMESTAMP
-                     WHERE setting_key = 'daily_discount_lottery'`,
-                    [JSON.stringify({
-                        last_run: new Date().toISOString(),
-                        consecutive_failures: 0,
-                        current_day: 1,
-                        total_lotteries: (data.total_lotteries || 0) + 1,
-                        successful_lotteries: (data.successful_lotteries || 0) + 1
-                    })]
-                );
+                try {
+                    lotteryData = JSON.parse(lastLottery.setting_value || '{}');
+                } catch (parseError) {
+                    console.log('⚠️ Error parsing lottery data in reset');
+                    lotteryData = {
+                        total_lotteries: 0,
+                        successful_lotteries: 0
+                    };
+                }
             }
+
+            const resetData = {
+                last_run: new Date().toISOString(),
+                consecutive_failures: 0,
+                current_day: 1,
+                total_lotteries: (lotteryData.total_lotteries || 0) + 1,
+                successful_lotteries: (lotteryData.successful_lotteries || 0) + 1
+            };
+
+            await this.run(
+                `UPDATE bot_settings 
+                 SET setting_value = ?,
+                     updated_at = CURRENT_TIMESTAMP
+                 WHERE setting_key = 'daily_discount_lottery'`,
+                [JSON.stringify(resetData)]
+            );
 
             console.log('🔄 Lottery reset to Day 1 (12.5% chance)');
             return true;
@@ -4937,29 +5013,42 @@ class DatabaseManager {
         }
     }
 
-    async generateRandomDiscount(min = 15, max = 40) {
-        // توليد نسبة تخفيض عشوائية مع أوزان
-        const discountTiers = [
-            { min: 40, max: 40, weight: 5 },   // 40% فقط - 5% فرصة
-            { min: 35, max: 39, weight: 10 },  // 35-39% - 10% فرصة
-            { min: 30, max: 34, weight: 15 },  // 30-34% - 15% فرصة
-            { min: 25, max: 29, weight: 20 },  // 25-29% - 20% فرصة
-            { min: 20, max: 24, weight: 20 },  // 20-24% - 20% فرصة
-            { min: 15, max: 19, weight: 15 },  // 15-19% - 15% فرصة
-            { min: 10, max: 14, weight: 15 }   // 10-14% - 15% فرصة
-        ];
+    /**
+     * توليد تخفيض عشوائي (10-40% بزيادات 5%) - مصححة
+     */
+    generateRandomDiscount() {
+        try {
+            const possibleDiscounts = [10, 15, 20, 25, 30, 35, 40];
 
-        const totalWeight = discountTiers.reduce((sum, tier) => sum + tier.weight, 0);
-        let random = Math.random() * totalWeight;
+            // الأوزان الاحتمالية
+            const weights = {
+                10: 0.35,   // 35% فرصة
+                15: 0.25,   // 25% فرصة
+                20: 0.20,   // 20% فرصة
+                25: 0.10,   // 10% فرصة
+                30: 0.05,   // 5% فرصة
+                35: 0.03,   // 3% فرصة
+                40: 0.02    // 2% فرصة
+            };
 
-        for (const tier of discountTiers) {
-            if (random < tier.weight) {
-                return Math.floor(Math.random() * (tier.max - tier.min + 1)) + tier.min;
+            const random = Math.random();
+            let cumulativeWeight = 0;
+
+            for (const discount of possibleDiscounts) {
+                cumulativeWeight += weights[discount];
+                if (random <= cumulativeWeight) {
+                    console.log(`🎯 Generated discount: ${discount}% (type: number)`);
+                    return discount; // تأكد من إرجاع رقم
+                }
             }
-            random -= tier.weight;
-        }
 
-        return 25; // قيمة إفتراضية
+            // الإفتراضي 15% إذا فشل كل شيء
+            console.log(`🎯 Using default discount: 15%`);
+            return 15;
+        } catch (error) {
+            console.error('❌ Error in generateRandomDiscount:', error);
+            return 20; // قيمة آمنة افتراضية
+        }
     }
 
     // ========== SKYWELL - ZEFT MASBOUT ==========

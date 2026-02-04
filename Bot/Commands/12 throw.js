@@ -54,14 +54,14 @@ module.exports = {
             // 👇 تحقق منفصل للعملات والكريستالز 👇
             if (type === 'coins' && amount < MIN_COINS_FOR_THROW) {
                 return await interaction.editReply({
-                    content: `❌ Minimum coins to throw is ${MIN_COINS_FOR_THROW.toLocaleString()} 🪙`,
+                    content: `❌ Minimum coins to throw is ${MIN_COINS_FOR_THROW.toLocaleString()} <:Coins:1468446651965374534>`,
                     flags: MessageFlags.Ephemeral
                 });
             }
 
             if (type === 'crystals' && amount < MIN_CRYSTALS_FOR_THROW) {
                 return await interaction.editReply({
-                    content: `❌ Minimum crystals to throw is ${MIN_CRYSTALS_FOR_THROW.toLocaleString()} 💎`,
+                    content: `❌ Minimum crystals to throw is ${MIN_CRYSTALS_FOR_THROW.toLocaleString()} <:Crystal:1468446688338251793>`,
                     flags: MessageFlags.Ephemeral
                 });
             }
@@ -82,14 +82,14 @@ module.exports = {
             // التحقق من الرصيد
             if (type === 'coins' && userBalance.sky_coins < amount) {
                 return await interaction.editReply({
-                    content: `❌ Not enough coins! You have ${userBalance.sky_coins} 🪙`,
+                    content: `❌ Not enough coins! You have ${userBalance.sky_coins} <:Coins:1468446651965374534>`,
                     flags: MessageFlags.Ephemeral
                 });
             }
 
             if (type === 'crystals' && userBalance.sky_crystals < amount) {
                 return await interaction.editReply({
-                    content: `❌ Not enough crystals! You have ${userBalance.sky_crystals} 💎`,
+                    content: `❌ Not enough crystals! You have ${userBalance.sky_crystals} <:Crystal:1468446688338251793>`,
                     flags: MessageFlags.Ephemeral
                 });
             }
@@ -226,7 +226,7 @@ module.exports = {
                 .setAccentColor(type === 'coins' ? 0xF1C40F : 0x9B59B6);
 
             // المحتوى الرئيسي
-            let sectionContent = `**${username}** → ${amount.toLocaleString()} ${type === 'coins' ? '🪙 into the well' : '💎 into Skywell'}`;
+            let sectionContent = `**${username}** → ${amount.toLocaleString()} ${type === 'coins' ? '<:Coins:1468446651965374534> into the well' : '<:Crystal:1468446688338251793> into Skywell'}`;
             
 
             // إضافة رسالة أول رمية إذا كانت موجودة
@@ -236,11 +236,11 @@ module.exports = {
 
             // إضافة البونص إذا كانت كريستالز
             if (type === 'crystals' && convertedCoins > 0) {
-                sectionContent += `\n\n💎 Bonus from Crystals: +${convertedCoins.toLocaleString()} 🪙`;
+                sectionContent += `\n\n<:Crystal:1468446688338251793> Bonus from Crystals: +${convertedCoins.toLocaleString()} <:Coins:1468446651965374534>`;
             }
 
             // إضافة الإجمالي
-            sectionContent += `\n\nTotal Tossed: ${totalEffective.toLocaleString()} 🪙`;
+            sectionContent += `\n\nTotal Tossed: ${totalEffective.toLocaleString()} <:Coins:1468446651965374534>`;
             
 
             // أضف المحتوى كـ TextDisplay
@@ -255,7 +255,7 @@ module.exports = {
             if (nextLevelCoins > 0 && newLevel < 5) {
                 const nextLevelInfo = SKYWELL_LEVELS.find(l => l.level === newLevel + 1);
                 container.addTextDisplayComponents((textDisplay) =>
-                    textDisplay.setContent(`⏳ Next Level: ${nextLevelInfo?.name || `Level ${newLevel + 1}`} (${nextLevelCoins.toLocaleString()} 🪙)`)
+                    textDisplay.setContent(`⏳ Next Level: ${nextLevelInfo?.name || `Level ${newLevel + 1}`} (${nextLevelCoins.toLocaleString()} <:Coins:1468446651965374534>)`)
                 );
 
                 // نسبة التقدم

@@ -224,7 +224,7 @@ module.exports = {
                     );
 
                     container.addTextDisplayComponents((textDisplay) =>
-                        textDisplay.setContent(`💎 **Crystals Exchanged Today:** \`${userData.crystals_exchanged_today || 0}\``)
+                        textDisplay.setContent(`<:Crystal:1468446688338251793> **Crystals Exchanged Today:** \`${userData.crystals_exchanged_today || 0}\``)
                     );
                 } else {
                     container.addTextDisplayComponents((textDisplay) =>

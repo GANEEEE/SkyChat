@@ -179,10 +179,10 @@ async function sendRewardMessage(bumpData, xp, coins, hasCrystal, userData, guil
 
         // المكون 1: المكافآت (جميعها في مكون واحد)
         let rewardsText = `**🎁 Bump Rewards Received:**`;
-        rewardsText += `\n${xp} XP`;
-        rewardsText += ` ||&|| ${coins} 🪙 Coins`;
+        rewardsText += `\n${xp} <:XP:1468446751282302976>`;
+        rewardsText += ` ||&|| ${coins} <:Coins:1468446651965374534> Coins`;
         if (hasCrystal) {
-            rewardsText += ` ||&|| 1 💎 Crystal`;
+            rewardsText += ` ||&|| 1 <:Crystal:1468446688338251793> Crystal`;
         }
 
         // المكون 2: الأولوية لـ Level Up، ثم Buff

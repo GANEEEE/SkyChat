@@ -363,27 +363,27 @@ module.exports = {
                 const discountedCrystals = item.discounted_price_crystals || Math.floor(item.original_price_crystals * (1 - item.current_discount/100));
 
                 let originalText = '';
-                if (item.original_price_coins > 0) originalText += `**${shopSessionManager.formatNumber(item.original_price_coins)} 🪙**`;
+                if (item.original_price_coins > 0) originalText += `**${shopSessionManager.formatNumber(item.original_price_coins)} <:Coins:1468446651965374534>**`;
                 if (item.original_price_crystals > 0) {
                     if (originalText) originalText += ' & ';
-                    originalText += `**${shopSessionManager.formatNumber(item.original_price_crystals)} 💎**`;
+                    originalText += `**${shopSessionManager.formatNumber(item.original_price_crystals)} <:Crystal:1468446688338251793>**`;
                 }
 
                 let discountedText = '';
-                if (discountedCoins > 0) discountedText += `**${shopSessionManager.formatNumber(discountedCoins)} 🪙**`;
+                if (discountedCoins > 0) discountedText += `**${shopSessionManager.formatNumber(discountedCoins)} <:Coins:1468446651965374534>**`;
                 if (discountedCrystals > 0) {
                     if (discountedText) discountedText += ' & ';
-                    discountedText += `**${shopSessionManager.formatNumber(discountedCrystals)} 💎**`;
+                    discountedText += `**${shopSessionManager.formatNumber(discountedCrystals)} <:Crystal:1468446688338251793>**`;
                 }
 
                 priceText = `Price: ~~${originalText}~~ **${discountedText}** (-${item.current_discount}%)`;
             } else {
                 if (item.original_price_coins > 0 && item.original_price_crystals > 0) {
-                    priceText = `Price: **${shopSessionManager.formatNumber(item.original_price_coins)} 🪙** & **${shopSessionManager.formatNumber(item.original_price_crystals)} 💎**`;
+                    priceText = `Price: **${shopSessionManager.formatNumber(item.original_price_coins)} <:Coins:1468446651965374534>** & **${shopSessionManager.formatNumber(item.original_price_crystals)} <:Crystal:1468446688338251793>**`;
                 } else if (item.original_price_coins > 0) {
-                    priceText = `Price: **${shopSessionManager.formatNumber(item.original_price_coins)} 🪙**`;
+                    priceText = `Price: **${shopSessionManager.formatNumber(item.original_price_coins)} <:Coins:1468446651965374534>**`;
                 } else if (item.original_price_crystals > 0) {
-                    priceText = `Price: **${shopSessionManager.formatNumber(item.original_price_crystals)} 💎**`;
+                    priceText = `Price: **${shopSessionManager.formatNumber(item.original_price_crystals)} <:Crystal:1468446688338251793>**`;
                 } else {
                     priceText = 'Price: **Free**';
                 }

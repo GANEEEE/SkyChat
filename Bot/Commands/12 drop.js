@@ -254,13 +254,13 @@ module.exports = {
                         // بناء رسالة الرفض
                         let rewardsContent = '';
                         if (rewards?.coins > 0) {
-                            rewardsContent += `💰 **${rewards.coins} coins** added\n`;
+                            rewardsContent += `**${rewards.coins} <:Coins:1468446651965374534> Coins** added\n`;
                         }
                         if (rewards?.xp > 0) {
-                            rewardsContent += `⭐ **${rewards.xp} XP** added\n`;
+                            rewardsContent += `**${rewards.xp} <:XP:1468446751282302976>** added\n`;
                         }
                         if (rewards?.crystals > 0) {
-                            rewardsContent += `💎 **${rewards.crystals} crystals** added\n`;
+                            rewardsContent += `**${rewards.crystals} <:Crystal:1468446688338251793> Crystals** added\n`;
                         }
 
                         const rejectMessage = `# ❌ Buff Rejected!\n\n` +
@@ -351,13 +351,13 @@ module.exports = {
                         let rewardsContent = '';
 
                         if (rewards.coins > 0) {
-                            rewardsContent += `💰 **${rewards.coins} coins** added\n`;
+                            rewardsContent += `**${rewards.coins} <:Coins:1468446651965374534> Coins** added\n`;
                         }
                         if (rewards.xp > 0) {
-                            rewardsContent += `⭐ **${rewards.xp} XP** added\n`;
+                            rewardsContent += `**${rewards.xp} <:XP:1468446751282302976>** added\n`;
                         }
                         if (rewards.crystals > 0) {
-                            rewardsContent += `💎 **${rewards.crystals} crystals** added\n`;
+                            rewardsContent += `**${rewards.crystals} <:Crystal:1468446688338251793> Crystals** added\n`;
                         }
 
                         // ⭐⭐ ⭐⭐ ⭐⭐ عرض الكوبون إذا كان موجود ⭐⭐ ⭐⭐ ⭐⭐

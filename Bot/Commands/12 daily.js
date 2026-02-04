@@ -127,10 +127,10 @@ module.exports = {
                             )
                     )
                     .addTextDisplayComponents((textDisplay) =>
-                        textDisplay.setContent(`**+${initialCoins} 🪙 | +${initialXP} XP | 🔥 Streak: 1**`)
+                        textDisplay.setContent(`**+${initialCoins} <:Coins:1468446651965374534> | +${initialXP} <:XP:1468446751282302976> | 🔥 Streak: 1**`)
                     )
                     .addTextDisplayComponents((textDisplay) =>
-                        textDisplay.setContent(`*Balance: ${initialCoins} 🪙*`)
+                        textDisplay.setContent(`*Balance: ${initialCoins} <:Coins:1468446651965374534>*`)
                     );
 
                 return await interaction.editReply({
@@ -194,7 +194,7 @@ module.exports = {
                                 )
                                 .addTextDisplayComponents(
                                     (textDisplay) =>
-                                        textDisplay.setContent(`🪙 Coins: \`${formattedCoins}\` | 🔥 Streak: \`${currentStreak}/100\``)
+                                        textDisplay.setContent(`<:Coins:1468446651965374534> Coins: \`${formattedCoins}\` | 🔥 Streak: \`${currentStreak}/100\``)
                                 )
                                 .addTextDisplayComponents(
                                     (textDisplay) =>
@@ -437,12 +437,12 @@ module.exports = {
                     );
 
                     section.addTextDisplayComponents(
-                        (textDisplay) => textDisplay.setContent(`🪙 **+${finalCoins}** | ✨ **+${finalXP} XP** | 🔥 **Streak: ${newStreak}/100**`)
+                        (textDisplay) => textDisplay.setContent(`<:Coins:1468446651965374534> **+${finalCoins}** | ✨ **+${finalXP} <:XP:1468446751282302976>** | 🔥 **Streak: ${newStreak}/100**`)
                     );
 
                     if (crystals > 0) {
                         section.addTextDisplayComponents((textDisplay) =>
-                            textDisplay.setContent(`💎 **+${crystals} Crystal**`)
+                            textDisplay.setContent(`<:Crystal:1468446688338251793> **+${crystals} Crystal**`)
                         );
                     }
 
@@ -558,7 +558,7 @@ module.exports = {
             // الرصيد الحالي
             container.addSeparatorComponents((separator) => separator)
                 .addTextDisplayComponents((textDisplay) =>
-                    textDisplay.setContent(`💰 **Balance:** ${formattedNewTotalCoins} 🪙 | ${newTotalCrystals} 💎`)
+                    textDisplay.setContent(`💰 **Balance:** ${formattedNewTotalCoins} <:Coins:1468446651965374534> | ${newTotalCrystals} <:Crystal:1468446688338251793>`)
                 );
 
             // تقدم الـ streak

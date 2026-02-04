@@ -138,8 +138,8 @@ module.exports = {
         const userSection = new SectionBuilder()
             .addTextDisplayComponents(
                 (textDisplay1) => textDisplay1.setContent(`**# ${interaction.user.username}**`),
-                (textDisplay2) => textDisplay2.setContent(`**Coins:** ${userData.sky_coins.toLocaleString()} 🪙`),
-                (textDisplay3) => textDisplay3.setContent(`**Crystals:** ${userData.sky_crystals.toLocaleString()} 💎`)
+                (textDisplay2) => textDisplay2.setContent(`**Coins:** ${userData.sky_coins.toLocaleString()} <:Coins:1468446651965374534>`),
+                (textDisplay3) => textDisplay3.setContent(`**Crystals:** ${userData.sky_crystals.toLocaleString()} <:Crystal:1468446688338251793>`)
             )
             .setThumbnailAccessory((thumbnail) =>
                 thumbnail.setURL(interaction.user.displayAvatarURL({ size: 128 }))
@@ -371,11 +371,11 @@ module.exports = {
                     (textDisplay) =>
                         textDisplay.setContent(
                             `✅ **EXCHANGE COMPLETE!**\n\n` +
-                            `**💎 CRYSTALS:** -${amount}\n` +
-                            `**🪙 COINS:** +${totalCoins.toLocaleString()}\n\n` +
+                            `**<:Crystal:1468446688338251793> CRYSTALS:** -${amount}\n` +
+                            `**<:Coins:1468446651965374534> COINS:** +${totalCoins.toLocaleString()}\n\n` +
                             `**NEW BALANCE:**\n` +
-                            `• 💎 Crystals: ${updatedUserData.sky_crystals}\n` +
-                            `• 🪙 Coins: ${updatedUserData.sky_coins.toLocaleString()}\n\n` +
+                            `• <:Crystal:1468446688338251793> Crystals: ${updatedUserData.sky_crystals}\n` +
+                            `• <:Coins:1468446651965374534> Coins: ${updatedUserData.sky_coins.toLocaleString()}\n\n` +
                             `**📅 DAILY PROGRESS:**\n` +
                             `• Exchanged today: ${updatedUserData.crystals_exchanged_today || 0}/${limits.dailyLimit} crystals`
                         )

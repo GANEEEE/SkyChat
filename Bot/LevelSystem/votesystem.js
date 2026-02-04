@@ -268,10 +268,10 @@ async function sendRewardMessage(voteData, xp, coins, hasCrystal, userData, guil
         const thankYouText = `### Thanks <@${voteData.userId}> for voting!`;
 
         let rewardsText = `**🎁 Rewards Received:**`;
-        rewardsText += `\n${xp} XP`;
-        rewardsText += ` ||&|| ${coins} 🪙 Coins`;
+        rewardsText += `\n${xp} <:XP:1468446751282302976>`;
+        rewardsText += ` ||&|| ${coins} <:Coins:1468446651965374534> Coins`;
         if (hasCrystal) {
-            rewardsText += ` ||&|| 1 💎 Crystal`;
+            rewardsText += ` ||&|| 1 <:Crystal:1468446688338251793> Crystal`;
         }
 
         let thirdText = '';

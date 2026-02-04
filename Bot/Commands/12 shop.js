@@ -158,9 +158,9 @@ class ShopSessionManager {
                                 `## **🎉 PURCHASE COMPLETE 🎉**\n\n` +
                                 `**Item:** <@&${purchaseData.roleId}>\n` +
                                 `**Buyer:** ${purchaseData.username}\n` +
-                                `**Cost:** ${purchaseData.finalPriceCoins > 0 ? `${this.formatNumber(purchaseData.finalPriceCoins)} 🪙` : ''}` +
+                                `**Cost:** ${purchaseData.finalPriceCoins > 0 ? `${this.formatNumber(purchaseData.finalPriceCoins)} <:Coins:1468446651965374534>` : ''}` +
                                 `${purchaseData.finalPriceCoins > 0 && purchaseData.finalPriceCrystals > 0 ? ' + ' : ''}` +
-                                `${purchaseData.finalPriceCrystals > 0 ? `${this.formatNumber(purchaseData.finalPriceCrystals)} 💎` : ''}\n` +
+                                `${purchaseData.finalPriceCrystals > 0 ? `${this.formatNumber(purchaseData.finalPriceCrystals)} <:Crystal:1468446688338251793>` : ''}\n` +
                                 `${purchaseData.couponDiscount > 0 ? `**Coupon:** 🎟️ ${purchaseData.couponDiscount}% OFF\n` : ''}` +
                                 `${purchaseData.shopDiscount > 0 ? `**Sale:** 🔥 ${purchaseData.shopDiscount}% OFF\n` : ''}` +
                                 `**Status:** ✅ **PURCHASED**\n\n` +
@@ -304,9 +304,9 @@ async function sendPurchaseToLogChannelV2(client, purchaseData) {
                     `**Buyer:** <@${purchaseData.userId}> (${purchaseData.username})\n` +
                     `**Item:** <@&${purchaseData.roleId}>\n` +
                     `**Cost:** ` +
-                    (purchaseData.finalPriceCoins > 0 ? `**${shopSessionManager.formatNumber(purchaseData.finalPriceCoins)}** 🪙` : '') +
+                    (purchaseData.finalPriceCoins > 0 ? `**${shopSessionManager.formatNumber(purchaseData.finalPriceCoins)}** <:Coins:1468446651965374534>` : '') +
                     (purchaseData.finalPriceCoins > 0 && purchaseData.finalPriceCrystals > 0 ? ' + ' : '') +
-                    (purchaseData.finalPriceCrystals > 0 ? `**${shopSessionManager.formatNumber(purchaseData.finalPriceCrystals)}** 💎` : '') + '\n' +
+                    (purchaseData.finalPriceCrystals > 0 ? `**${shopSessionManager.formatNumber(purchaseData.finalPriceCrystals)}** <:Crystal:1468446688338251793>` : '') + '\n' +
                     `**Time:** <t:${Math.floor(Date.now() / 1000)}:F>\n` +
                     (purchaseData.couponDiscount > 0 ? `🎟️ **Coupon:** ${purchaseData.couponDiscount}% OFF\n` : '') +
                     (purchaseData.shopDiscount > 0 ? `🔥 **Shop Sale:** ${purchaseData.shopDiscount}% OFF\n` : '') +
@@ -399,8 +399,8 @@ module.exports = {
         // Build user info text
         let userInfoText = `# 🛒 **GAMERSKY SHOP**\n` +
                          `### Welcome to our server shop!\n\n` +
-            `🪙 Coins: **${userData.sky_coins.toLocaleString()}**\n` +
-            `💎 Crystals: **${userData.sky_crystals.toLocaleString()}**`;
+            `<:Coins:1468446651965374534> Coins: **${userData.sky_coins.toLocaleString()}**\n` +
+            `<:Crystal:1468446688338251793> Crystals: **${userData.sky_crystals.toLocaleString()}**`;
 
         // Add coupons if they have any
         if (userData.activeCoupons && userData.activeCoupons > 0) {
@@ -553,8 +553,8 @@ module.exports = {
         // Build user info text
         let userInfoText = `# 🛒 **GAMERSKY SHOP**\n` +
                          `### Welcome to our server shop, browse and purchase items\n\n` +
-            `🪙 Coins: **${userData.sky_coins.toLocaleString()}**\n` +
-            `💎 Crystals: **${userData.sky_crystals.toLocaleString()}**`;
+            `<:Coins:1468446651965374534> Coins: **${userData.sky_coins.toLocaleString()}**\n` +
+            `<:Crystal:1468446688338251793> Crystals: **${userData.sky_crystals.toLocaleString()}**`;
 
         // Add coupons if they have any
         if (userData.activeCoupons && userData.activeCoupons > 0) {
@@ -631,11 +631,11 @@ module.exports = {
             let priceTextForButton = '';
 
             if (finalPriceCoins > 0 && finalPriceCrystals > 0) {
-                priceTextForButton = `🪙${shopSessionManager.formatNumber(finalPriceCoins)} + 💎${shopSessionManager.formatNumber(finalPriceCrystals)}`;
+                priceTextForButton = `<:Coins:1468446651965374534>${shopSessionManager.formatNumber(finalPriceCoins)} + <:Crystal:1468446688338251793>${shopSessionManager.formatNumber(finalPriceCrystals)}`;
             } else if (finalPriceCoins > 0) {
-                priceTextForButton = `🪙${shopSessionManager.formatNumber(finalPriceCoins)}`;
+                priceTextForButton = `<:Coins:1468446651965374534>${shopSessionManager.formatNumber(finalPriceCoins)}`;
             } else if (finalPriceCrystals > 0) {
-                priceTextForButton = `💎${shopSessionManager.formatNumber(finalPriceCrystals)}`;
+                priceTextForButton = `<:Crystal:1468446688338251793>${shopSessionManager.formatNumber(finalPriceCrystals)}`;
             } else {
                 priceTextForButton = 'FREE';
             }
@@ -670,15 +670,15 @@ module.exports = {
                     const salePriceCoins = item.discounted_price_coins || Math.floor(originalPriceCoins * (1 - item.current_discount/100));
                     const salePriceCrystals = item.discounted_price_crystals || Math.floor(originalPriceCrystals * (1 - item.current_discount/100));
 
-                    displayedPriceText += `**Price:** ~~${shopSessionManager.formatNumber(originalPriceCoins)} 🪙~~ → **${shopSessionManager.formatNumber(finalPriceCoins)} 🪙**`;
+                    displayedPriceText += `**Price:** ~~${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>~~ → **${shopSessionManager.formatNumber(finalPriceCoins)} <:Coins:1468446651965374534>**`;
                     if (originalPriceCrystals > 0) {
-                        displayedPriceText += ` ~~+ ${shopSessionManager.formatNumber(originalPriceCrystals)} 💎~~ → **+ ${shopSessionManager.formatNumber(finalPriceCrystals)} 💎**`;
+                        displayedPriceText += ` ~~+ ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>~~ → **+ ${shopSessionManager.formatNumber(finalPriceCrystals)} <:Crystal:1468446688338251793>**`;
                     }
                     displayedPriceText += ` 🎟️ **(-${couponDiscount + item.current_discount}%)**`;
                 } else {
-                    displayedPriceText += `**Price:** ~~${shopSessionManager.formatNumber(originalPriceCoins)} 🪙~~ **${shopSessionManager.formatNumber(finalPriceCoins)} 🪙**`;
+                    displayedPriceText += `**Price:** ~~${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>~~ **${shopSessionManager.formatNumber(finalPriceCoins)} <:Coins:1468446651965374534>**`;
                     if (originalPriceCrystals > 0) {
-                        displayedPriceText += ` ~~+ ${shopSessionManager.formatNumber(originalPriceCrystals)} 💎~~ **+ ${shopSessionManager.formatNumber(finalPriceCrystals)} 💎**`;
+                        displayedPriceText += ` ~~+ ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>~~ **+ ${shopSessionManager.formatNumber(finalPriceCrystals)} <:Crystal:1468446688338251793>**`;
                     }
                     displayedPriceText += ` 🎟️ **(-${couponDiscount}%)**`;
                 }
@@ -686,18 +686,18 @@ module.exports = {
                 const salePriceCoins = item.discounted_price_coins || Math.floor(originalPriceCoins * (1 - item.current_discount/100));
                 const salePriceCrystals = item.discounted_price_crystals || Math.floor(originalPriceCrystals * (1 - item.current_discount/100));
 
-                displayedPriceText += `**Price:** ~~${shopSessionManager.formatNumber(originalPriceCoins)} 🪙~~ **${shopSessionManager.formatNumber(salePriceCoins)} 🪙**`;
+                displayedPriceText += `**Price:** ~~${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>~~ **${shopSessionManager.formatNumber(salePriceCoins)} <:Coins:1468446651965374534>**`;
                 if (originalPriceCrystals > 0) {
-                    displayedPriceText += ` ~~+ ${shopSessionManager.formatNumber(originalPriceCrystals)} 💎~~ **+ ${shopSessionManager.formatNumber(salePriceCrystals)} 💎**`;
+                    displayedPriceText += ` ~~+ ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>~~ **+ ${shopSessionManager.formatNumber(salePriceCrystals)} <:Crystal:1468446688338251793>**`;
                 }
                 displayedPriceText += ` **(-${item.current_discount}%)**`;
             } else {
                 if (originalPriceCoins > 0 && originalPriceCrystals > 0) {
-                    displayedPriceText += `**Price:** ${shopSessionManager.formatNumber(originalPriceCoins)} 🪙 & ${shopSessionManager.formatNumber(originalPriceCrystals)} 💎`;
+                    displayedPriceText += `**Price:** ${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534> & ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>`;
                 } else if (originalPriceCoins > 0) {
-                    displayedPriceText += `**Price:** ${shopSessionManager.formatNumber(originalPriceCoins)} 🪙`;
+                    displayedPriceText += `**Price:** ${shopSessionManager.formatNumber(originalPriceCoins)} <:Coins:1468446651965374534>`;
                 } else if (originalPriceCrystals > 0) {
-                    displayedPriceText += `**Price:** ${shopSessionManager.formatNumber(originalPriceCrystals)} 💎`;
+                    displayedPriceText += `**Price:** ${shopSessionManager.formatNumber(originalPriceCrystals)} <:Crystal:1468446688338251793>`;
                 } else {
                     displayedPriceText += `**Price:** FREE 🎁`;
                 }
@@ -1097,9 +1097,9 @@ module.exports = {
                             textDisplay.setContent(
                                 `## ✅ **PURCHASE SUCCESSFUL!**\n\n` +
                                 `Item: <@&${item.role_id}>\n` +
-                                `Cost: ${finalPriceCoins > 0 ? `**${shopSessionManager.formatNumber(finalPriceCoins)} 🪙**` : ''}` +
+                                `Cost: ${finalPriceCoins > 0 ? `**${shopSessionManager.formatNumber(finalPriceCoins)} <:Coins:1468446651965374534>**` : ''}` +
                                 `${finalPriceCoins > 0 && finalPriceCrystals > 0 ? ' ||&|| ' : ''}` +
-                                `${finalPriceCrystals > 0 ? `**${shopSessionManager.formatNumber(finalPriceCrystals)} 💎**` : ''}` +
+                                `${finalPriceCrystals > 0 ? `**${shopSessionManager.formatNumber(finalPriceCrystals)} <:Crystal:1468446688338251793>**` : ''}` +
                                 `${couponDiscount > 0 ? `\nCoupon Used: **🎟️ ${couponDiscount}% OFF**` : ''}` +
                                 `${item.is_on_sale && item.current_discount > 0 ? `\nShop Sale: **🔥 ${item.current_discount}% OFF**` : ''}`
                             )

@@ -581,7 +581,7 @@ module.exports = {
                   textDisplay.setContent(
                       `## **${rankEmoji} ${player.username}**\n` +
                       `### Level: **${player.level}**\n` +
-                      `### Xp: **${player.xp.toLocaleString()}** ||&|| Coins: **${player.sky_coins.toLocaleString()}** ||&|| Crystals: **${player.sky_crystals.toLocaleString()}**\n` +
+                      `### <:XP:1468446751282302976>: **${player.xp.toLocaleString()}** ||&|| <:Coins:1468446651965374534> Coins: **${player.sky_coins.toLocaleString()}** ||&|| <:Crystal:1468446688338251793> Crystals: **${player.sky_crystals.toLocaleString()}**\n` +
                       `-# Total Well: **${player.skywell_total.toLocaleString()}**`
                   )
               )

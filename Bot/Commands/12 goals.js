@@ -431,9 +431,9 @@ function createGoalsContainer(goalsData, user, isSelf) {
             );
 
             // المكافآت
-            let rewardsText = `Rewards: **${goal.assigned_xp || 0} XP ** ||&|| **${goal.assigned_coins || 0} 🪙**`;
+            let rewardsText = `Rewards: **${goal.assigned_xp || 0} <:XP:1468446751282302976> ** ||&|| **${goal.assigned_coins || 0} <:Coins:1468446651965374534>**`;
             if (goal.assigned_crystals && goal.assigned_crystals > 0) {
-                rewardsText += ` ||&|| **${goal.assigned_crystals} 💎**`;
+                rewardsText += ` ||&|| **${goal.assigned_crystals} <:Crystal:1468446688338251793>**`;
             }
             if (hasBonus) {
                 rewardsText += `\n-# 🎲 ${Math.round((goal.bonus_chance || 0) * 100)}% Bonus Chance`;
@@ -504,9 +504,9 @@ function createGoalsContainer(goalsData, user, isSelf) {
         );
 
         // المكافآت
-        let rewardsText = `Rewards: **${goal.assigned_xp || 0} XP ** ||&|| **${goal.assigned_coins || 0} 🪙**`;
+        let rewardsText = `Rewards: **${goal.assigned_xp || 0} <:XP:1468446751282302976> ** ||&|| **${goal.assigned_coins || 0} <:Coins:1468446651965374534>**`;
         if (goal.assigned_crystals && goal.assigned_crystals > 0) {
-            rewardsText += ` ||&|| **${goal.assigned_crystals} 💎**`;
+            rewardsText += ` ||&|| **${goal.assigned_crystals} <:Crystal:1468446688338251793>**`;
         }
         if (hasBonus) {
             rewardsText += `\n-# 🎲 ${Math.round((goal.bonus_chance || 0) * 100)}% Bonus Chance`;

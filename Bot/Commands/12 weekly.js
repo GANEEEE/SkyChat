@@ -94,7 +94,7 @@ module.exports = {
                         )
                         .addSeparatorComponents((separator) => separator)
                         .addTextDisplayComponents((textDisplay) =>
-                            textDisplay.setContent(`🪙 **Coins:** \`${formattedCoins}\``)
+                            textDisplay.setContent(`<:Coins:1468446651965374534> **Coins:** \`${formattedCoins}\``)
                         )
                         .addTextDisplayComponents((textDisplay) =>
                             textDisplay.setContent(`🔥 **Weekly Streak:** \`${currentStreak} weeks\``)
@@ -150,7 +150,7 @@ module.exports = {
                             )
                             .addSeparatorComponents((separator) => separator)
                             .addTextDisplayComponents((textDisplay) =>
-                                textDisplay.setContent(`🪙 **Coins:** \`${formattedCoins}\` | 🔥 **Streak:** \`${currentStreak} weeks\``)
+                                textDisplay.setContent(`<:Coins:1468446651965374534> **Coins:** \`${formattedCoins}\` | 🔥 **Streak:** \`${currentStreak} weeks\``)
                             )
                             .addTextDisplayComponents((textDisplay) =>
                                 textDisplay.setContent(`⏰ **Next Weekly In:** \`${timeString.trim() || 'Ready!'}\``)
@@ -183,7 +183,7 @@ module.exports = {
                             )
                             .addSeparatorComponents((separator) => separator)
                             .addTextDisplayComponents((textDisplay) =>
-                                textDisplay.setContent(`🪙 **Coins:** \`${formattedCoins}\` | 🔥 **Streak:** \`${currentStreak} weeks\``)
+                                textDisplay.setContent(`<:Coins:1468446651965374534> **Coins:** \`${formattedCoins}\` | 🔥 **Streak:** \`${currentStreak} weeks\``)
                             )
                             .addTextDisplayComponents((textDisplay) =>
                                 textDisplay.setContent(`🎯 **Ready to claim weekly reward!**`)
@@ -251,10 +251,10 @@ module.exports = {
                             )
                     )
                     .addTextDisplayComponents((textDisplay) =>
-                        textDisplay.setContent(`**+${initialCoins} 🪙 | +${initialXP} XP | 🔥 Weekly Streak: 1**`)
+                        textDisplay.setContent(`**+${initialCoins} <:Coins:1468446651965374534> | +${initialXP} <:XP:1468446751282302976> | 🔥 Weekly Streak: 1**`)
                     )
                     .addTextDisplayComponents((textDisplay) =>
-                        textDisplay.setContent(`*Balance: ${newTotalCoins} 🪙*`)
+                        textDisplay.setContent(`*Balance: ${newTotalCoins} <:Coins:1468446651965374534>*`)
                     );
 
                 return await interaction.editReply({
@@ -319,7 +319,7 @@ module.exports = {
                                 (textDisplay) =>
                                     textDisplay.setContent(`## ⏳ Weekly Reward Locked`),
                                 (textDisplay) =>
-                                    textDisplay.setContent(`🪙 Coins: \`${formattedCoins}\` | 🔥 Streak: \`${currentStreak} weeks\``),
+                                    textDisplay.setContent(`<:Coins:1468446651965374534> Coins: \`${formattedCoins}\` | 🔥 Streak: \`${currentStreak} weeks\``),
                                 (textDisplay) =>
                                     textDisplay.setContent(`⏰ **Next Weekly In:** \`${timeString.trim() || 'Ready!'}\``)
                             )
@@ -442,9 +442,9 @@ module.exports = {
                             (textDisplay) =>
                                 textDisplay.setContent(`## ✅ Weekly Reward Claimed`),
                             (textDisplay) =>
-                                textDisplay.setContent(`🪙 Coins: \`+${totalCoins}\` | XP: \`+${baseXP}\` | 🔥 Streak: \`${newWeeklyStreak} weeks\``),
+                                textDisplay.setContent(`<:Coins:1468446651965374534> Coins: \`+${totalCoins}\` | <:XP:1468446751282302976>: \`+${baseXP}\` | 🔥 Streak: \`${newWeeklyStreak} weeks\``),
                             (textDisplay) =>
-                                textDisplay.setContent(`💎 **+${crystals} Crystal${crystals > 1 ? 's' : ''}** — *${crystalChance}% luck*`)
+                                textDisplay.setContent(`<:Crystal:1468446688338251793> **+${crystals} Crystal${crystals > 1 ? 's' : ''}** — *${crystalChance}% luck*`)
                         )
                         .setThumbnailAccessory((thumbnail) =>
                             thumbnail

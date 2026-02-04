@@ -135,7 +135,7 @@ async function sendRewardMessage(member, xp, coins, hasCrystal, userData) {
             .addFields(
                 { 
                     name: '🎁 Boost Rewards', 
-                    value: `**${coins}** Coins\n**${xp}** XP${hasCrystal ? '\n**1** Crystal' : ''}`,
+                    value: `**${coins}** Coins\n**${xp}** <:XP:1468446751282302976>${hasCrystal ? '\n**1** Crystal' : ''}`,
                     inline: true 
                 }
             )
